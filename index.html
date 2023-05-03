@@ -4,9 +4,63 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calendar</title>
+    <link rel="stylesheet" href="css/style.css">
+    <title>Календарь</title>
 </head>
 <body>
+    <div class="content">
+        <div class="top">
+            <div class="scale">
+                <button class="scale__current">
+                    <div class="scale__icon-text">
+                        <img src="img/calendar.svg" alt="" class="scale__calendar">
+                        <span class="scale__text">3 дня</span>
+                    </div>
+                    <img src="img/open.svg" alt="" class="scale__toggle">
+                </button>
+                <div class="scale__options-wrapper">
+                    <ul class="scale__options">
+                        <li class="scale__option">3 дня</li>
+                        <li class="scale__option">Неделя</li>
+                        <li class="scale__option">Месяц</li>
+                        <li class="scale__option">3 месяца</li>
+                        <li class="scale__option">Год</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="period">
+                <div class="period__current">
+                    <button id="returnToCurrentDate" class="small-button" title="Вернуться к текущей дате">
+                        <img src="img/return.svg" alt="Current date" class="button-image">
+                    </button>
+                    <p class="period__text">30 сентября - 30 сентября</p>
+                </div>
+                
+                <div class="period__change-period">
+                    <button id="back" class="small-button">
+                        <img src="img/back.svg" alt="Back" class="button-image">
+                    </button>
+                    <button id="forward" class="small-button">
+                        <img src="img/forward.svg" alt="Forward" class="button-image">
+                    </button>
+                </div>
+            </div>
+
+            <button class="medium-button" title="Отобразить события в виде списка">
+                <img src="img/list.svg" alt="List view" class="button-image">
+            </button>
+        </div>
+
+        <div class="sidebar">
+
+        </div>
+
+        <div class="calendar">
+
+        </div>
+    </div>
+
     <script src="js/script.js"></script>
 </body>
 </html>
