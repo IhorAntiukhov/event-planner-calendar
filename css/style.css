@@ -74,11 +74,6 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 400;
 }
 
-body {
-  font-family: Carlito;
-  font-weight: 500;
-}
-
 .small-button {
   width: 24px;
   height: 24px;
@@ -97,10 +92,10 @@ body {
 }
 
 .content {
-  min-height: 100vh;
   display: grid;
   grid-template: auto 1fr/auto 1fr;
   grid-template-areas: "sidebar header" "sidebar calendar";
+  min-height: 100vh;
 }
 
 .scale {
@@ -113,7 +108,7 @@ body {
   align-items: center;
   width: 185px;
   padding: 6px 14px;
-  background-color: #F5F5F5;
+  background-color: #f5f5f5;
   border-radius: 5.5px;
   box-shadow: 1px 1px 4px #696969;
 }
@@ -161,26 +156,26 @@ body {
 
 @keyframes openScaleOptions {
   0% {
-    opacity: 0;
     transform: scaleY(0);
     transform-origin: top;
+    opacity: 0;
   }
   100% {
-    opacity: 1;
     transform: scaleY(1);
     transform-origin: top;
+    opacity: 1;
   }
 }
 @keyframes closeScaleOptions {
   0% {
-    opacity: 1;
     transform: scaleY(1);
     transform-origin: top;
+    opacity: 1;
   }
   100% {
-    opacity: 0;
     transform: scaleY(0);
     transform-origin: top;
+    opacity: 0;
   }
 }
 .scale__options {
@@ -195,8 +190,8 @@ body {
   font-weight: 400;
   color: black;
   padding: 10px 14px;
-  background-color: #E8E8E8;
-  border-bottom: solid #A9A9A9 1.5px;
+  background-color: #e8e8e8;
+  border-bottom: solid #a9a9a9 1.5px;
   transition-duration: 0.15s;
 }
 .scale__option:first-child {
@@ -209,28 +204,23 @@ body {
   border-bottom-right-radius: 5.5px;
 }
 .scale__option:hover {
-  background-color: #DCDCDC;
+  background-color: #dcdcdc;
 }
 
 .top {
-  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
   grid-area: header;
   padding: 10px 30px;
-  background-color: #DCDCDC;
+  background-color: #dcdcdc;
 }
 
 .period {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 460px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 460px;
 }
 
 .period__current {
@@ -258,11 +248,143 @@ body {
   background-color: #696969;
 }
 
-.calendar {
-  grid-area: calendar;
-  background-color: #F5F5F5;
+.side-calendar {
+  margin: 15px;
+  padding: 15px;
+  background-color: #e8e8e8;
+  border-radius: 20px;
 }
 
-.calendar__days {
+.side-calendar__month {
   display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.side-calendar__change-period {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 165px;
+}
+
+.side-calendar__text {
+  font-family: Carlito;
+  font-size: 24px;
+  font-weight: 400;
+  color: black;
+  margin: 0 10px;
+}
+
+.side-calendar__dates {
+  position: relative;
+  display: grid;
+  grid-template: 1fr/repeat(7, 1fr);
+  gap: 10px;
+}
+
+.side-calendar__day {
+  font-family: Carlito;
+  font-size: 18px;
+  font-weight: 400;
+  color: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  aspect-ratio: 1/1;
+  padding: 0 8px;
+  background-color: #a9a9a9;
+  border-radius: 50%;
+  transition-duration: 0.15s;
+}
+.side-calendar__day:hover {
+  opacity: 0.8;
+}
+
+.side-calendar__year {
+  font-family: Carlito;
+  font-size: 24px;
+  font-weight: 700;
+  color: #696969;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
+
+.calendar {
+  overflow-y: auto;
+  grid-area: calendar;
+  background-color: #f5f5f5;
+}
+
+.calendar__year {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  display: none;
+  padding: 10px 15px;
+  background-color: white;
+  border-top-left-radius: 15px;
+}
+
+.calendar__year_visible {
+  display: inline-block;
+}
+
+.calendar__year-text {
+  font-family: Carlito;
+  font-size: 24px;
+  font-weight: 700;
+  color: #696969;
+}
+
+.days {
+  display: grid;
+  grid-template: 1fr/repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  padding: 25px;
+}
+
+.days__date {
+  background-color: #dcdcdc;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+}
+
+.days__date_selected {
+  background-color: #9a9adb;
+}
+
+.days__week-day {
+  font-family: Carlito;
+  font-size: 36px;
+  font-weight: 400;
+  color: white;
+  background-color: #a9a9a9;
+  text-align: center;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+  padding: 5px 0;
+}
+
+.days__week-day_selected {
+  background-color: #7676a8;
+}
+
+.days__month-day {
+  font-family: Carlito;
+  font-size: 36px;
+  font-weight: 400;
+  color: white;
+  text-align: center;
+  padding: 5px 0 2px;
+}
+
+.days__events {
+  border: solid 4px #dcdcdc;
+  border-top: 0;
+}
+
+.days__events_selected {
+  border-color: #9a9adb;
 }
