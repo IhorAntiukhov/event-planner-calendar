@@ -11,13 +11,13 @@
     <div class="content">
         <div class="top">
             <div class="scale">
-                <button class="scale__current">
+                <div class="scale__current">
                     <div class="scale__icon-text">
                         <img src="img/calendar.svg" alt="" class="scale__calendar">
                         <span class="scale__text">3 дня</span>
                     </div>
                     <img src="img/open.svg" alt="" class="scale__toggle">
-                </button>
+                </div>
                 <div class="scale__options-wrapper">
                     <ul class="scale__options">
                         <li class="scale__option">3 дня</li>
@@ -68,6 +68,44 @@
                 <div class="side-calendar__dates">
                 </div>
             </div>
+
+            <div class="sidebar__add">
+                <button id="addEvent" class="sidebar__button">
+                    <img src="img/add.svg" alt="" class="sidebar__button-image">
+                    <p class="sidebar__button-text">Добавить событие</p>
+                </button>
+                <button id="addTask" class="sidebar__button">
+                    <img src="img/task.svg" alt="" class="sidebar__button-image">
+                    <div class="sidebar__add-task-text">
+                        <p class="sidebar__button-text">Добавить задачу</p>
+                    </div>
+                </button>
+            </div>
+
+            <div class="sidebar__checkbox-group">
+                <input type="checkbox" id="importantEvents" class="sidebar__checkbox" checked>
+                <label for="importantEvents" class="sidebar__checkbox-label"><span class="sidebar__checkbox-button"></span>Важные события</label>
+            </div>
+            <div class="sidebar__checkbox-group">
+                <input type="checkbox" id="nonUrgentEvents" class="sidebar__checkbox" checked>
+                <label for="nonUrgentEvents" class="sidebar__checkbox-label"><span class="sidebar__checkbox-button"></span>Несрочные события</label>
+            </div>
+            <div class="sidebar__checkbox-group">
+                <input type="checkbox" id="creativeEvents" class="sidebar__checkbox" checked>
+                <label for="creativeEvents" class="sidebar__checkbox-label"><span class="sidebar__checkbox-button"></span>Творчество и креатив</label>
+            </div>
+            <div class="sidebar__checkbox-group">
+                <input type="checkbox" id="healthAndEarningsEvents" class="sidebar__checkbox" checked>
+                <label for="healthAndEarningsEvents" class="sidebar__checkbox-label"><span class="sidebar__checkbox-button"></span>Здоровье и заработок</label>
+            </div>
+            <div id="lastCheckboxGroup" class="sidebar__checkbox-group">
+                <input type="checkbox" id="entertainmentEvents" class="sidebar__checkbox" checked>
+                <label for="entertainmentEvents" class="sidebar__checkbox-label"><span class="sidebar__checkbox-button"></span>Развлечения</label>
+            </div>
+
+            <button class="sidebar__language">
+                <img src="img/language.svg" alt="" class="button-image" title="Изменить язык">
+            </button>
         </div>
 
         <div class="calendar">
@@ -75,6 +113,21 @@
             </div>
             <div class="calendar__year">
                 <p class="calendar__year-text"></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="add-event-popup">
+        <div class="add-event-popup__shade-area"></div>
+        <div class="add-event">
+            <div class="add-event__content">
+                <p class="add-event__header">Добавление события</p>
+                <button id="closePopup" class="small-button">
+                    <img src="img/closing-cross.svg" alt="Закрыть" class="button-image">
+                </button>
+
+                <input type="text" class="add-event__input" placeholder="Название события">
+                <input type="text" class="add-event__input" placeholder="Описание события">
             </div>
         </div>
     </div>

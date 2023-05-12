@@ -6,6 +6,7 @@ const currentPeriodElement = document.querySelector(".period__text")
 let calendarScaleOpened = false
 let calendarScale = localStorage.getItem("calendarScale")
 let selectedDate = 0
+let appJustLaunched = true
 calendarScale = calendarScale || "3 дня"
 
 document.querySelector(".scale__text").innerHTML = calendarScale
@@ -52,37 +53,59 @@ const changeSideCalendarMonth = (changeFactor) => {
 
     for (let i = 1; i <= sideCalendarDate.getDate(); i++) {
         sidebarCalendarElement.insertAdjacentHTML("beforeend", `
-            <button class="side-calendar__day">${i}</button>
+            <button class="side-calendar__day" title="Перейти на ${i} ${formatMonth(sideCalendarDate)}">${i}</button>
         `)
     }
 }
 
 changeSideCalendarMonth(0)
 
-const displayEvents = () => {
+const displayEvents = (changeFactor) => {
     let differenceInDays = Math.round((periodEndDate.getTime() - periodStartDate.getTime()) / (1000 * 3600 * 24))
     let startDate = new Date(periodStartDate)
 
     const daysElement = document.querySelector(".days")
-    daysElement.innerHTML = ""
+    let timeout = 0
+    if (!appJustLaunched) {
+        daysElement.classList.remove("days_show")
+        daysElement.classList.remove("days_show-reverse")
+        if (changeFactor === 1) {
+            daysElement.classList.add("days_hide")
+        } else if (changeFactor === -1) {
+            daysElement.classList.add("days_hide-reverse")
+        }
+        timeout = 500
+    }
 
-    for (let i = 0; i <= differenceInDays; i++) {
-        let weekDay = startDate.toLocaleString("ru-RU", { weekday: "short" })
-        weekDay = weekDay[0].toUpperCase() + weekDay.slice(1)
+    setTimeout(() => {
+        daysElement.innerHTML = ""
 
-        daysElement.insertAdjacentHTML("beforeend", `
-            <div class="days__item">
-                <div class="days__date ${(startDate.getDate() == selectedDate) ? "days__date_selected" : ""}">
-                    <p class="days__week-day ${(startDate.getDate() == selectedDate) ? "days__week-day_selected" : ""}">${weekDay}</p>
+        for (let i = 0; i <= differenceInDays; i++) {
+            let weekDay = startDate.toLocaleString("ru-RU", { weekday: "short" })
+            weekDay = weekDay[0].toUpperCase() + weekDay.slice(1)
+
+            daysElement.insertAdjacentHTML("beforeend", `
+            <div class="days__item ${(startDate.getDate() == selectedDate) ? "days__item_selected" : ""}">
+                <div class="days__date">
+                    <p class="days__week-day">${weekDay}</p>
                     <p class="days__month-day">${startDate.getDate()}</p>
                 </div>
-                <div class="days__events ${(startDate.getDate() == selectedDate) ? "days__events_selected" : ""}">
+                <div class="days__events">
 
                 </div>
             </div>
-        `)
-        startDate.setDate(startDate.getDate() + 1)
-    }
+            `)
+            startDate.setDate(startDate.getDate() + 1)
+            if (!appJustLaunched) {
+                if (changeFactor === 1) {
+                    daysElement.classList.replace("days_hide", "days_show")
+                } else if (changeFactor === -1) {
+                    daysElement.classList.replace("days_hide-reverse", "days_show-reverse")
+                }
+            }
+            appJustLaunched = false
+        }
+    }, timeout)
 }
 
 const setCalendarScale = () => {
@@ -129,7 +152,7 @@ const setCalendarScale = () => {
         document.querySelector(".calendar__year").classList.remove("calendar__year_visible")
     }
 
-    displayEvents()
+    displayEvents(1)
 }
 
 setCalendarScale()
@@ -170,14 +193,12 @@ const changeCalendarPeriod = (changeFactor) => {
         document.querySelector(".calendar__year").classList.remove("calendar__year_visible")
     }
 
-    displayEvents()
+    displayEvents(changeFactor)
 }
 
 document.addEventListener("click", (event) => {
     if (selectedDate != 0) {
-        document.querySelector(".days__date_selected").classList.remove("days__date_selected")
-        document.querySelector(".days__week-day_selected").classList.remove("days__week-day_selected")
-        document.querySelector(".days__events_selected").classList.remove("days__events_selected")
+        document.querySelector(".days__item_selected").classList.add("days__item_deselected")
         selectedDate = 0
     }
     if (calendarScaleOpened && !event.target.closest(".scale__current")) {
@@ -229,5 +250,13 @@ document.addEventListener("click", (event) => {
                 break
             }
         }
+    } else if (event.target.closest("#addEvent")) {
+        document.querySelector(".add-event-popup").classList.add("add-event-popup_open")
+    } else if (event.target.closest("#closePopup") || event.target.closest(".add-event-popup__shade-area")) {
+        document.querySelector(".add-event-popup").classList.remove("add-event-popup_open")
+        document.querySelector(".add-event-popup").classList.add("add-event-popup_close")
+        setTimeout(() => {
+            document.querySelector(".add-event-popup").classList.remove("add-event-popup_close")
+        }, 500)
     }
 })

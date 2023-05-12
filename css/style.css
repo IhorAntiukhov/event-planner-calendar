@@ -74,6 +74,15 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 400;
 }
 
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.25);
+  border-radius: 5px;
+}
+
 .small-button {
   width: 24px;
   height: 24px;
@@ -107,10 +116,11 @@ h1, h2, h3, h4, h5, h6 {
   justify-content: space-between;
   align-items: center;
   width: 185px;
-  padding: 6px 14px;
+  padding: 8px 14px;
   background-color: #f5f5f5;
   border-radius: 5.5px;
   box-shadow: 1px 1px 4px #696969;
+  cursor: pointer;
 }
 
 .scale__icon-text {
@@ -139,6 +149,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .scale__options-wrapper {
   position: absolute;
+  z-index: 2;
   display: none;
   width: 100%;
   padding-top: 3px;
@@ -245,11 +256,20 @@ h1, h2, h3, h4, h5, h6 {
 
 .sidebar {
   grid-area: sidebar;
+  max-height: 100vh;
+  padding: 15px;
   background-color: #696969;
+  overflow-y: auto;
+}
+.sidebar::-webkit-scrollbar-thumb {
+  background-color: transparent;
+}
+.sidebar:hover::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.25);
 }
 
 .side-calendar {
-  margin: 15px;
+  margin-bottom: 20px;
   padding: 15px;
   background-color: #e8e8e8;
   border-radius: 20px;
@@ -298,7 +318,7 @@ h1, h2, h3, h4, h5, h6 {
   transition-duration: 0.15s;
 }
 .side-calendar__day:hover {
-  opacity: 0.8;
+  background-color: #c0c0c0;
 }
 
 .side-calendar__year {
@@ -311,10 +331,137 @@ h1, h2, h3, h4, h5, h6 {
   right: 0;
 }
 
+.sidebar__add {
+  display: inline-table;
+  grid-template: repeat(2, 1fr)/1fr;
+}
+
+.sidebar__button {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  padding: 10px 20px;
+  background-color: #a9a9a9;
+  border-radius: 24.5px;
+  transition-duration: 0.15s;
+}
+.sidebar__button:hover {
+  background-color: #c0c0c0;
+}
+
+#addTask {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.sidebar__add-task-text {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.sidebar__button-image {
+  height: 24px;
+  margin-right: 10px;
+}
+
+.sidebar__button-text {
+  font-family: Carlito;
+  font-size: 24px;
+  font-weight: 400;
+  color: black;
+}
+
+.sidebar__checkbox-group {
+  margin-bottom: 15px;
+}
+
+#lastCheckboxGroup {
+  margin-bottom: 20px;
+}
+
+.sidebar__checkbox {
+  display: none;
+}
+
+.sidebar__checkbox-button {
+  position: relative;
+  display: inline-block;
+  width: 28px;
+  height: 28px;
+  margin-right: 10px;
+  background-color: #a9a9a9;
+  border: solid 2px #a9a9a9;
+  border-radius: 25%;
+  transition-duration: 0.25s;
+}
+.sidebar__checkbox-button::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: inline-block;
+  width: 65%;
+  height: 65%;
+  background: url("../img/check-mark.svg");
+  background-size: contain;
+  opacity: 0;
+  transition-duration: 0.25s;
+}
+
+.sidebar__checkbox-label {
+  font-family: Carlito;
+  font-size: 24px;
+  font-weight: 400;
+  color: black;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.sidebar__checkbox:checked + .sidebar__checkbox-label .sidebar__checkbox-button::before {
+  opacity: 1;
+}
+
+#importantEvents:checked + .sidebar__checkbox-label .sidebar__checkbox-button {
+  background-color: #db0000;
+}
+
+#nonUrgentEvents:checked + .sidebar__checkbox-label .sidebar__checkbox-button {
+  background-color: #0063db;
+}
+
+#creativeEvents:checked + .sidebar__checkbox-label .sidebar__checkbox-button {
+  background-color: #af00db;
+}
+
+#healthAndEarningsEvents:checked + .sidebar__checkbox-label .sidebar__checkbox-button {
+  background-color: #0dc200;
+}
+
+#entertainmentEvents:checked + .sidebar__checkbox-label .sidebar__checkbox-button {
+  background-color: #db9d00;
+}
+
+.sidebar__language {
+  width: 64px;
+  height: 64px;
+  padding: 8px;
+  background-color: #a9a9a9;
+  border-radius: 50%;
+  transition-duration: 0.15s;
+}
+.sidebar__language:hover {
+  background-color: #c0c0c0;
+}
+
 .calendar {
-  overflow-y: auto;
   grid-area: calendar;
   background-color: #f5f5f5;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .calendar__year {
@@ -345,14 +492,110 @@ h1, h2, h3, h4, h5, h6 {
   padding: 25px;
 }
 
+.days_hide {
+  animation: hideDates 0.5s linear 0s 1 normal forwards;
+}
+
+.days_hide-reverse {
+  animation: hideDatesReverse 0.5s linear 0s 1 normal forwards;
+}
+
+.days_show {
+  animation: showDates 0.5s linear 0s 1 normal forwards;
+}
+
+.days_show-reverse {
+  animation: showDatesReverse 0.5s linear 0s 1 normal forwards;
+}
+
+@keyframes hideDates {
+  0% {
+    transform: translateX(0%);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-100%);
+    opacity: 0.3;
+  }
+}
+@keyframes hideDatesReverse {
+  0% {
+    transform: translateX(0%);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(100%);
+    opacity: 0.3;
+  }
+}
+@keyframes showDates {
+  0% {
+    transform: translateX(100%);
+    opacity: 0.3;
+  }
+  100% {
+    transform: translate(0%);
+    opacity: 1;
+  }
+}
+@keyframes showDatesReverse {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0.3;
+  }
+  100% {
+    transform: translate(0%);
+    opacity: 1;
+  }
+}
+.days__item_selected .days__date {
+  background-color: #9a9adb;
+}
+.days__item_selected .days__week-day {
+  background-color: #7676a8;
+}
+.days__item_selected .days__events {
+  border-color: #9a9adb;
+}
+
+.days__item_deselected .days__date {
+  animation: deselectDate 0.25s linear 0s 1 normal forwards;
+}
+.days__item_deselected .days__week-day {
+  animation: deselectWeekDate 0.25s linear 0s 1 normal forwards;
+}
+.days__item_deselected .days__events {
+  animation: deselectEvents 0.25s linear 0s 1 normal forwards;
+}
+
+@keyframes deselectDate {
+  0% {
+    background-color: #9a9adb;
+  }
+  100% {
+    background-color: #dcdcdc;
+  }
+}
+@keyframes deselectWeekDate {
+  0% {
+    background-color: #7676a8;
+  }
+  100% {
+    background-color: #a9a9a9;
+  }
+}
+@keyframes deselectEvents {
+  0% {
+    border-color: #9a9adb;
+  }
+  100% {
+    border-color: #dcdcdc;
+  }
+}
 .days__date {
   background-color: #dcdcdc;
   border-top-left-radius: 15px;
   border-top-right-radius: 15px;
-}
-
-.days__date_selected {
-  background-color: #9a9adb;
 }
 
 .days__week-day {
@@ -365,10 +608,6 @@ h1, h2, h3, h4, h5, h6 {
   border-top-left-radius: 15px;
   border-top-right-radius: 15px;
   padding: 5px 0;
-}
-
-.days__week-day_selected {
-  background-color: #7676a8;
 }
 
 .days__month-day {
@@ -385,6 +624,103 @@ h1, h2, h3, h4, h5, h6 {
   border-top: 0;
 }
 
-.days__events_selected {
-  border-color: #9a9adb;
+.add-event-popup {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: none;
+  width: 100vw;
+  height: 100vh;
+}
+
+.add-event-popup_open {
+  display: block;
+}
+.add-event-popup_open .add-event-popup__shade-area {
+  animation: showShadeArea 0.5s linear 0s 1 normal forwards;
+}
+.add-event-popup_open .add-event {
+  animation: showAddEventPopup 0.5s linear 0s 1 normal forwards;
+}
+
+.add-event-popup_close {
+  display: block;
+}
+.add-event-popup_close .add-event-popup__shade-area {
+  animation: hideShadeArea 0.5s linear 0s 1 normal forwards;
+}
+.add-event-popup_close .add-event {
+  animation: hideAddEventPopup 0.5s linear 0s 1 normal forwards;
+}
+
+@keyframes showShadeArea {
+  0% {
+    background-color: rgba(0, 0, 0, 0);
+  }
+  100% {
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+}
+@keyframes hideShadeArea {
+  0% {
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+  100% {
+    background-color: rgba(0, 0, 0, 0);
+  }
+}
+@keyframes showAddEventPopup {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}
+@keyframes hideAddEventPopup {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+  }
+}
+.add-event-popup__shade-area {
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.add-event {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50vw;
+  padding: 20px;
+  background-color: white;
+  border-radius: 20px;
+  box-shadow: 0 0 15px black;
+}
+
+.add-event__content {
+  position: relative;
+}
+
+.add-event__header {
+  font-family: Carlito;
+  font-size: 36px;
+  font-weight: 400;
+  color: black;
+  margin: 0 34px 15px 0;
+}
+
+#closePopup {
+  position: absolute;
+  top: 0;
+  right: 0;
 }
