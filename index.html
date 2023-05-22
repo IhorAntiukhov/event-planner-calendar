@@ -10,21 +10,21 @@
 <body>
     <div class="content">
         <div class="top">
-            <div class="scale">
-                <div class="scale__current">
-                    <div class="scale__icon-text">
-                        <img src="img/calendar.svg" alt="" class="scale__calendar">
-                        <span class="scale__text">3 дня</span>
+            <div id="scale" class="dropdown">
+                <div class="dropdown__current" title="Масштаб календаря">
+                    <div class="dropdown__icon-text">
+                        <img src="img/calendar.svg" alt="" class="dropdown__icon">
+                        <span class="dropdown__text">3 дня</span>
                     </div>
-                    <img src="img/open.svg" alt="" class="scale__toggle">
+                    <img src="img/open.svg" alt="" class="dropdown__toggle">
                 </div>
-                <div class="scale__options-wrapper">
-                    <ul class="scale__options">
-                        <li class="scale__option">3 дня</li>
-                        <li class="scale__option">Неделя</li>
-                        <li class="scale__option">Месяц</li>
-                        <li class="scale__option">3 месяца</li>
-                        <li class="scale__option">Год</li>
+                <div class="dropdown__options-wrapper">
+                    <ul class="dropdown__options">
+                        <li scale="3d" class="dropdown__option">3 дня</li>
+                        <li scale="7d" class="dropdown__option">Неделя</li>
+                        <li scale="1m" class="dropdown__option">Месяц</li>
+                        <li scale="3m" class="dropdown__option">3 месяца</li>
+                        <li scale="1y" class="dropdown__option">Год</li>
                     </ul>
                 </div>
             </div>
@@ -39,10 +39,10 @@
                 
                 <div class="period__change-period">
                     <button id="back" class="small-button">
-                        <img src="img/back.svg" alt="Back" class="button-image">
+                        <img src="img/back.svg" alt="Назад" class="button-image">
                     </button>
                     <button id="forward" class="small-button">
-                        <img src="img/forward.svg" alt="Forward" class="button-image">
+                        <img src="img/forward.svg" alt="Далее" class="button-image">
                     </button>
                 </div>
             </div>
@@ -70,14 +70,14 @@
             </div>
 
             <div class="sidebar__add">
-                <button id="addEvent" class="sidebar__button">
-                    <img src="img/add.svg" alt="" class="sidebar__button-image">
-                    <p class="sidebar__button-text">Добавить событие</p>
+                <button id="addEvent" class="text-button">
+                    <img src="img/add.svg" alt="" class="text-button__image">
+                    <p class="text-button__text">Добавить событие</p>
                 </button>
-                <button id="addTask" class="sidebar__button">
-                    <img src="img/task.svg" alt="" class="sidebar__button-image">
-                    <div class="sidebar__add-task-text">
-                        <p class="sidebar__button-text">Добавить задачу</p>
+                <button id="addTask" class="text-button">
+                    <img src="img/task.svg" alt="" class="text-button__image">
+                    <div class="text-button__add-task-text">
+                        <p class="text-button__text">Добавить задачу</p>
                     </div>
                 </button>
             </div>
@@ -126,8 +126,76 @@
                     <img src="img/closing-cross.svg" alt="Закрыть" class="button-image">
                 </button>
 
-                <input type="text" class="add-event__input" placeholder="Название события">
-                <input type="text" class="add-event__input" placeholder="Описание события">
+                <div class="add-event__input-group">
+                    <span class="add-event__placeholder">Название события</span>
+                    <input id="eventName" type="text" class="add-event__input" autocomplete="off">
+                </div>
+                <div class="add-event__input-group">
+                    <span class="add-event__placeholder">Описание события</span>
+                    <input id="eventDescription" type="text" class="add-event__input" autocomplete="off">
+                </div>
+
+                <div id="eventType" class="dropdown">
+                    <div class="dropdown__current">
+                        <div class="dropdown__icon-text">
+                            <span class="dropdown__color"></span>
+                            <div class="dropdown__header-text">
+                                <span class="dropdown__header">Тип события</span>
+                                <span class="dropdown__text">Важные события</span>
+                            </div>
+                        </div>
+                        <img src="img/open.svg" alt="" class="dropdown__toggle">
+                    </div>
+                    <div class="dropdown__options-wrapper">
+                        <ul class="dropdown__options">
+                            <li class="dropdown__option">
+                                <span class="dropdown__color red-events"></span>
+                                <p>Важные события</p>
+                            </li>
+                            <li class="dropdown__option">
+                                <span class="dropdown__color blue-events"></span>
+                                <p>Несрочные события</p>
+                            </li>
+                            <li class="dropdown__option">
+                                <span class="dropdown__color purple-events"></span>
+                                <p>Творчество и креатив</p>
+                            </li>
+                            <li class="dropdown__option">
+                                <span class="dropdown__color green-events"></span>
+                                <p>Здоровье и заработок</p>
+                            </li>
+                            <li class="dropdown__option">
+                                <span class="dropdown__color orange-events"></span>
+                                <p>Развлечения</p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="add-event__input-group add-event__input-group_time">
+                    <span class="add-event__input-header">Время события</span>
+                    <div class="add-event__time-group">
+                        <input id="eventHours" type="number" class="add-event__input add-event__input_time" placeholder="00">
+                        <span class="add-event__colon">:</span>
+                        <input id="eventMinutes" type="number" class="add-event__input add-event__input_time" placeholder="00">
+                    </div>
+                </div>
+
+                <div class="add-event__input-group add-event__input-group_time">
+                    <span class="add-event__input-header">Дата события</span>
+                    <div class="add-event__time-group">
+                        <input id="eventDay" type="number" class="add-event__input add-event__input_time" placeholder="00">
+                        <span class="add-event__colon add-event__dot">.</span>
+                        <input id="eventMonth" type="number" class="add-event__input add-event__input_time" placeholder="00">
+                        <span class="add-event__colon add-event__dot">.</span>
+                        <input id="eventYear" type="number" class="add-event__input add-event__input_time add-event__input_year" placeholder="0000">
+                    </div>
+                </div>
+
+                <button id="createEvent" class="text-button">
+                    <img src="img/add.svg" alt="" class="text-button__image">
+                    <p class="text-button__text">Создать событие</p>
+                </button>
             </div>
         </div>
     </div>
