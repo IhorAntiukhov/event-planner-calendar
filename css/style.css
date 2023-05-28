@@ -232,6 +232,30 @@ h1, h2, h3, h4, h5, h6 {
   width: 480px;
 }
 
+.period_show {
+  animation: showPeriodAnimation 0.25s linear 0s 1 normal forwards;
+}
+
+.period_hide {
+  animation: hidePeriodAnimation 0.25s linear 0s 1 normal forwards;
+}
+
+@keyframes showPeriodAnimation {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes hidePeriodAnimation {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
 .period__current {
   display: flex;
   align-items: center;
@@ -499,6 +523,28 @@ h1, h2, h3, h4, h5, h6 {
   color: #696969;
 }
 
+.events-in-month {
+  padding: 25px;
+  border-bottom: solid 2px #a9a9a9;
+}
+
+.events-in-month__month {
+  font-family: Carlito;
+  font-size: 28px;
+  font-weight: 400;
+  color: #696969;
+  margin-bottom: 15px;
+}
+
+.events-in-month__events {
+  display: grid;
+  grid-template: 1fr/repeat(2, 1fr);
+  gap: 20px;
+}
+.events-in-month__events .event {
+  margin-bottom: 0;
+}
+
 .days {
   display: grid;
   grid-template: 1fr/repeat(auto-fit, minmax(200px, 1fr));
@@ -559,6 +605,52 @@ h1, h2, h3, h4, h5, h6 {
   }
   100% {
     transform: translate(0%);
+    opacity: 1;
+  }
+}
+.days_show-events-in-calendar {
+  animation: slideDownAnimation 0.5s linear 0s 1 normal forwards;
+}
+
+.days_hide-events-in-calendar {
+  animation: slideUpAnimation 0.5s linear 0s 1 normal forwards;
+}
+
+.days_display-none {
+  display: none;
+}
+
+.events-in-list {
+  display: none;
+}
+
+.events-in-list_show {
+  display: block;
+  animation: slideDownAnimation 0.5s linear 0s 1 normal forwards;
+}
+
+.events-in-list_hide {
+  display: block;
+  animation: slideUpAnimation 0.5s linear 0s 1 normal forwards;
+}
+
+@keyframes slideUpAnimation {
+  0% {
+    transform: translateY(0%);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100%);
+    opacity: 0.3;
+  }
+}
+@keyframes slideDownAnimation {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0.3;
+  }
+  100% {
+    transform: translateY(0%);
     opacity: 1;
   }
 }
@@ -770,6 +862,20 @@ h1, h2, h3, h4, h5, h6 {
   border-bottom-color: #0063db;
 }
 
+.add-event__input-group_select .add-event__placeholder {
+  animation: movePlaceholderToTop 0.15s linear 0s 1 normal forwards;
+}
+.add-event__input-group_select .add-event__input {
+  animation: moveInputDown 0.15s linear 0s 1 normal forwards;
+}
+
+.add-event__input-group_deselect .add-event__placeholder {
+  animation: movePlaceholderToNormal 0.15s linear 0s 1 normal forwards;
+}
+.add-event__input-group_deselect .add-event__input {
+  animation: moveInputToNormal 0.15s linear 0s 1 normal forwards;
+}
+
 .add-event__input {
   font-family: Carlito;
   font-size: 24px;
@@ -779,20 +885,6 @@ h1, h2, h3, h4, h5, h6 {
   z-index: 2;
   width: 100%;
   background-color: transparent;
-}
-
-.add-event__input_select .add-event__placeholder {
-  animation: movePlaceholderToTop 0.15s linear 0s 1 normal forwards;
-}
-.add-event__input_select .add-event__input {
-  animation: moveInputDown 0.15s linear 0s 1 normal forwards;
-}
-
-.add-event__input_deselect .add-event__placeholder {
-  animation: movePlaceholderToNormal 0.15s linear 0s 1 normal forwards;
-}
-.add-event__input_deselect .add-event__input {
-  animation: moveInputToNormal 0.15s linear 0s 1 normal forwards;
 }
 
 .add-event__placeholder {
@@ -951,6 +1043,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 #createEvent {
+  margin: 0 10px 0 0;
   background-color: #dcdcdc;
 }
 #createEvent:hover {
@@ -966,6 +1059,9 @@ h1, h2, h3, h4, h5, h6 {
 .event:last-child {
   margin-bottom: 0;
 }
+.event:focus {
+  cursor: grab;
+}
 
 .event__time {
   font-family: Carlito;
@@ -980,6 +1076,8 @@ h1, h2, h3, h4, h5, h6 {
   font-size: 24px;
   font-weight: 400;
   color: white;
+  inline-size: 100%;
+  overflow-wrap: break-word;
 }
 
 .event__description {
@@ -1004,6 +1102,8 @@ h1, h2, h3, h4, h5, h6 {
   color: white;
   display: none;
   margin-top: 5px;
+  inline-size: 100%;
+  overflow-wrap: break-word;
 }
 
 .event__description-content_show {
@@ -1041,4 +1141,67 @@ h1, h2, h3, h4, h5, h6 {
   width: 24px;
   height: 24px;
   background-color: transparent;
+}
+
+.event__task-name {
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+.event__task-name div:has(> .event__checkbox:checked) + .event__name {
+  text-decoration: line-through;
+}
+
+.add-event__change-event {
+  display: flex;
+}
+
+.add-event__delete-event {
+  display: none;
+  width: 49px;
+  height: 49px;
+  padding: 12px;
+  background-color: #dcdcdc;
+  border-radius: 50%;
+  transition-duration: 0.15s;
+}
+.add-event__delete-event:hover {
+  background-color: #e8e8e8;
+}
+
+.add-event__delete-event_show {
+  display: inline-block;
+}
+
+.event__checkbox {
+  display: none;
+}
+
+.event__checkbox-button {
+  position: relative;
+  display: inline-block;
+  width: 28px;
+  height: 28px;
+  margin-right: 10px;
+  border: solid 2px white;
+  border-radius: 50%;
+  transition-duration: 0.25s;
+}
+.event__checkbox-button::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: inline-block;
+  width: 65%;
+  height: 65%;
+  background: url("../img/check-mark.svg");
+  background-size: contain;
+  opacity: 0;
+  transition-duration: 0.25s;
+}
+
+.event__checkbox:checked + .event__checkbox-label .event__checkbox-button::before {
+  opacity: 1;
 }

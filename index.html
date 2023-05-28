@@ -47,7 +47,7 @@
                 </div>
             </div>
 
-            <button class="medium-button" title="Отобразить события в виде списка">
+            <button id="displayEventsInList" class="medium-button" title="Отобразить события в виде списка">
                 <img src="img/list.svg" alt="List view" class="button-image">
             </button>
         </div>
@@ -127,11 +127,11 @@
                 </button>
 
                 <div class="add-event__input-group">
-                    <span class="add-event__placeholder">Название события</span>
+                    <span id="eventNamePlaceholder" class="add-event__placeholder">Название события</span>
                     <input id="eventName" type="text" class="add-event__input" autocomplete="off">
                 </div>
                 <div class="add-event__input-group">
-                    <span class="add-event__placeholder">Описание события</span>
+                    <span id="eventDescriptionPlaceholder" class="add-event__placeholder">Описание события</span>
                     <input id="eventDescription" type="text" class="add-event__input" autocomplete="off">
                 </div>
 
@@ -140,7 +140,7 @@
                         <div class="dropdown__icon-text">
                             <span class="dropdown__color"></span>
                             <div class="dropdown__header-text">
-                                <span class="dropdown__header">Тип события</span>
+                                <span id="eventTypeHeader" class="dropdown__header">Тип события</span>
                                 <span class="dropdown__text">Важные события</span>
                             </div>
                         </div>
@@ -173,7 +173,7 @@
                 </div>
 
                 <div class="add-event__input-group add-event__input-group_time">
-                    <span class="add-event__input-header">Время события</span>
+                    <span id="eventTimeHeader" class="add-event__input-header">Время события</span>
                     <div class="add-event__time-group">
                         <input id="eventHours" type="number" class="add-event__input add-event__input_time" placeholder="00">
                         <span class="add-event__colon">:</span>
@@ -182,7 +182,7 @@
                 </div>
 
                 <div class="add-event__input-group add-event__input-group_time">
-                    <span class="add-event__input-header">Дата события</span>
+                    <span id="eventDateHeader" class="add-event__input-header">Дата события</span>
                     <div class="add-event__time-group">
                         <input id="eventDay" type="number" class="add-event__input add-event__input_time" placeholder="00">
                         <span class="add-event__colon add-event__dot">.</span>
@@ -192,10 +192,16 @@
                     </div>
                 </div>
 
-                <button id="createEvent" class="text-button">
-                    <img src="img/add.svg" alt="" class="text-button__image">
-                    <p class="text-button__text">Создать событие</p>
-                </button>
+                <div class="add-event__change-event">
+                    <button id="createEvent" class="text-button">
+                        <img src="img/add.svg" alt="" class="text-button__image">
+                        <p class="text-button__text">Создать событие</p>
+                    </button>
+
+                    <button id="deleteEvent" class="add-event__delete-event" title="Удалить событие">
+                        <img src="img/delete.svg" alt="Удалить" class="button-image">
+                    </button>
+                </div>
             </div>
         </div>
     </div>

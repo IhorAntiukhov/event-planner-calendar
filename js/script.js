@@ -13,6 +13,9 @@ calendarScale = calendarScale || 1
 let editEvent = false
 let editableEventIndex = 0
 let previousTimeOfEvent, previousDateOfEvent = ""
+let eventElement
+let displayEventsInListMode = false
+let eventsAddedOrChanged = false
 const calendarScales = ["3 дня", "Неделя", "Месяц", "3 месяца", "Год"]
 const events = []
 
@@ -66,6 +69,41 @@ const changeSideCalendarMonth = (changeFactor) => {
 
 changeSideCalendarMonth(0)
 
+const insertEvent = (value, eventsInList) => {
+    let eventDateString = ""
+    if (eventsInList) {
+        const eventDate = new Date(value.date)
+        eventDateString = ` · ${eventDate.getDate()} ${formatMonth(eventDate)}`
+    }
+
+    const checkboxId = String(Math.random()).replace(".", "")
+    return `
+    <div class="event ${value.type}" draggable="true">
+        <p class="event__time" translate="no">${value.time}${eventDateString}</p>
+        ${(!value.eventOrTask) ? `
+        <div class="event__task-name">
+            <div>
+                <input type="checkbox" id="task${checkboxId}" class="event__checkbox" ${(value.checked) ? "checked" : ""}>
+                <label for="task${checkboxId}" id="label${checkboxId}" time="${value.time}" date="${value.date}" class="event__checkbox-label"><span class="event__checkbox-button"></span></label>
+            </div>
+            <p class="event__name" translate="no">${value.name}</p>
+        </div>
+        ` : `<p class="event__name" translate="no">${value.name}</p>`}
+        <button time="${value.time}" date="${value.date}" class="event__edit edit">
+            <img src="img/edit.svg" alt="Изменить" class="button-image">
+        </button>
+        ${(value.description !== "") ? `
+            <div class="event__description">
+                <p class="event__description-text">Описание</p>
+                <button description="${value.time}.${value.date}" class="small-button toggle-description">
+                    <img src="img/open-2.svg" alt="Развернуть" class="button-image">
+                </button>
+            </div>
+            <p description="${value.time}.${value.date}" translate="no" class="event__description-content">${value.description}</p>
+            ` : ""}
+    </div>`
+}
+
 const displayEvents = (changeFactor) => {
     let differenceInDays = Math.round((periodEndDate.getTime() - periodStartDate.getTime()) / (1000 * 3600 * 24))
     let startDate = new Date(periodStartDate)
@@ -93,24 +131,7 @@ const displayEvents = (changeFactor) => {
         if (suitableEvents.length > 0) {
             let eventElements = ""
             suitableEvents.forEach((value) => {
-                eventElements += `
-                <div class="event ${value.type}">
-                    <p class="event__time" translate="no">${value.time}</p>
-                    <p class="event__name" translate="no">${value.name}</p>
-                    <button time="${value.time}" date="${value.date}" class="event__edit edit">
-                        <img src="img/edit.svg" alt="Изменить" class="button-image">
-                    </button>
-                    ${(value.description !== "") ? `
-                    <div class="event__description">
-                        <p class="event__description-text">Описание</p>
-                        <button description="${value.time}.${value.date}" class="small-button toggle-description">
-                            <img src="img/open-2.svg" alt="Развернуть" class="button-image">
-                        </button>
-                    </div>
-                    <p description="${value.time}.${value.date}" translate="no" class="event__description-content">${value.description}</p>
-                    ` : ""}
-                </div>
-                `
+                eventElements += insertEvent(value, false)
             })
             return eventElements
         } else {
@@ -294,31 +315,73 @@ const closeOrOpenMenu = (dropdownId) => {
 
 const inputEventListener = (event) => {
     if (String(event.target.value).length > 0) {
-        event.target.closest(".add-event__input-group").classList.remove("add-event__input_deselect")
-        event.target.closest(".add-event__input-group").classList.add("add-event__input_select")
+        event.target.closest(".add-event__input-group").classList.remove("add-event__input-group_deselect")
+        event.target.closest(".add-event__input-group").classList.add("add-event__input-group_select")
     } else if (String(event.target.value).length === 0) {
-        event.target.closest(".add-event__input-group").classList.replace("add-event__input_select", "add-event__input_deselect")
+        event.target.closest(".add-event__input-group").classList.replace("add-event__input-group_select", "add-event__input-group_deselect")
     }
 }
 
+const displayEventsInList = (showEvents) => {
+    const eventsInMonths = {}
+    events.forEach((value) => {
+        let month = (new Date(value.date)).toLocaleString("ru-RU", { month: "long" })
+        month = month[0].toUpperCase() + month.slice(1)
+        if (eventsInMonths[month] === undefined) eventsInMonths[month] = []
+        eventsInMonths[month].push(value)
+    })
+    const eventsInMonthsArray = Object.entries(eventsInMonths)
+    const monthNames = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"]
+    eventsInMonthsArray.sort((a, b) => {
+        if (monthNames.indexOf(a[0]) < monthNames.indexOf(b[0])) {
+            return -1
+        } else if (monthNames.indexOf(a[0]) > monthNames.indexOf(b[0])) {
+            return 1
+        } else {
+            return 0
+        }
+    })
+
+    let eventsInMonthElements = '<div class="events-in-list">'
+    eventsInMonthsArray.forEach((value) => {
+        eventsInMonthElements +=
+            `<div class="events-in-month">
+                    <p class="events-in-month__month">${value[0]}</p>
+                    <div class="events-in-month__events">`
+
+        value[1].forEach((value) => {
+            eventsInMonthElements += insertEvent(value, true)
+        })
+        eventsInMonthElements += `</div></div>`
+    })
+    eventsInMonthElements += `</div>`
+    document.querySelector(".calendar").insertAdjacentHTML("afterbegin", eventsInMonthElements)
+
+    if (showEvents) document.querySelector(".events-in-list").style.display = "block"
+}
+
 const createOrEditEvent = () => {
-    if (document.querySelector("#eventName").value != "" && document.querySelector("#eventHours").value != ""
-        && document.querySelector("#eventMinutes").value != "" && document.querySelector("#eventDay").value != ""
-        && document.querySelector("#eventMonth").value != "" && document.querySelector("#eventYear").value != "") {
+    const eventNameElement = document.querySelector("#eventName")
+    const eventHoursElement = document.querySelector("#eventHours")
+    const eventMinutesElement = document.querySelector("#eventMinutes")
+    const eventDayElement = document.querySelector("#eventDay")
+    const eventMonthElement = document.querySelector("#eventMonth")
+    const eventYearElement = document.querySelector("#eventYear")
 
-        if (+(document.querySelector("#eventHours").value) >= 0 && +(document.querySelector("#eventHours").value) <= 23
-            && +(document.querySelector("#eventMinutes").value) >= 0 && +(document.querySelector("#eventMinutes").value) <= 59
-            && +(document.querySelector("#eventDay").value) >= 0 && +(document.querySelector("#eventDay").value) <= 31
-            && +(document.querySelector("#eventMonth").value) >= 1 && +(document.querySelector("#eventMonth").value) <= 12
-            && document.querySelector("#eventYear").value.length == 4) {
+    if (eventNameElement.value != "" && eventHoursElement.value != "" && eventMinutesElement.value != ""
+        && eventDayElement.value != "" && eventMonthElement.value != "" && eventYearElement.value != "") {
 
-            const eventDate = `${document.querySelector("#eventYear").value}-${(document.querySelector("#eventMonth").value).padStart(2, "0")}-${(document.querySelector("#eventDay").value).padStart(2, "0")}T00:00:00.0Z`
+        if (+(eventHoursElement.value) >= 0 && +(eventHoursElement.value) <= 23 && +(eventMinutesElement.value) >= 0
+            && +(eventMinutesElement.value) <= 59 && +(eventDayElement.value) >= 0 && +(eventDayElement.value) <= 31
+            && +(eventMonthElement.value) >= 1 && +(eventMonthElement.value) <= 12 && eventYearElement.value.length == 4) {
+
+            const eventDate = `${eventYearElement.value}-${(eventMonthElement.value).padStart(2, "0")}-${(eventDayElement.value).padStart(2, "0")}T00:00:00.0Z`
 
             let sameEventIndex = -1
-            const currentTimeOfEvent = `${document.querySelector("#eventHours").value.padStart(2, "0")}:${document.querySelector("#eventMinutes").value.padStart(2, "0")}`
+            const currentTimeOfEvent = `${eventHoursElement.value.padStart(2, "0")}:${eventMinutesElement.value.padStart(2, "0")}`
             if (!editEvent || !(previousTimeOfEvent == currentTimeOfEvent && previousDateOfEvent == eventDate)) {
                 sameEventIndex = events.findIndex((value) => {
-                    return (value.time == `${document.querySelector("#eventHours").value.padStart(2, "0")}:${document.querySelector("#eventMinutes").value.padStart(2, "0")}`
+                    return (value.time == `${eventHoursElement.value.padStart(2, "0")}:${eventMinutesElement.value.padStart(2, "0")}`
                         && value.date == eventDate)
                 })
             }
@@ -346,8 +409,10 @@ const createOrEditEvent = () => {
                         name: document.querySelector("#eventName").value,
                         description: document.querySelector("#eventDescription").value,
                         type: eventType,
-                        time: `${document.querySelector("#eventHours").value.padStart(2, "0")}:${document.querySelector("#eventMinutes").value.padStart(2, "0")}`,
+                        time: `${eventHoursElement.value.padStart(2, "0")}:${eventMinutesElement.value.padStart(2, "0")}`,
                         date: eventDate,
+                        eventOrTask: (document.querySelector("#createEvent p").innerHTML == "Создать событие"),
+                        checked: false
                     })
 
                     sortEvents()
@@ -355,7 +420,7 @@ const createOrEditEvent = () => {
                     events[editableEventIndex].name = document.querySelector("#eventName").value
                     events[editableEventIndex].description = document.querySelector("#eventDescription").value
                     events[editableEventIndex].type = eventType
-                    events[editableEventIndex].time = `${document.querySelector("#eventHours").value.padStart(2, "0")}:${document.querySelector("#eventMinutes").value.padStart(2, "0")}`
+                    events[editableEventIndex].time = `${eventHoursElement.value.padStart(2, "0")}:${eventMinutesElement.value.padStart(2, "0")}`
                     events[editableEventIndex].date = eventDate
 
                     sortEvents()
@@ -368,30 +433,38 @@ const createOrEditEvent = () => {
                 setTimeout(() => {
                     document.querySelector(".add-event-popup").classList.remove("add-event-popup_close")
 
-                    const isDateInRange = () => {
-                        const startDate = new Date(periodStartDate)
-                        startDate.setHours(0)
-                        startDate.setMinutes(0)
-                        startDate.setSeconds(0)
+                    if (!displayEventsInListMode) {
+                        const isDateInRange = () => {
+                            const startDate = new Date(periodStartDate)
+                            startDate.setHours(0)
+                            startDate.setMinutes(0)
+                            startDate.setSeconds(0)
+                            startDate.setMilliseconds(0)
 
-                        const endDate = new Date(periodEndDate)
-                        endDate.setHours(0)
-                        endDate.setMinutes(0)
-                        endDate.setSeconds(0)
+                            const endDate = new Date(periodEndDate)
+                            endDate.setHours(0)
+                            endDate.setMinutes(0)
+                            endDate.setSeconds(0)
+                            endDate.setMilliseconds(0)
 
-                        const currentDate = new Date(eventDate)
-                        currentDate.setHours(0)
-                        currentDate.setMinutes(0)
-                        currentDate.setSeconds(0)
+                            const currentDate = new Date(eventDate)
+                            currentDate.setHours(0)
+                            currentDate.setMinutes(0)
+                            currentDate.setSeconds(0)
 
-                        return (currentDate.getTime() < startDate.getTime() || currentDate.getTime() > endDate.getTime()) ? false : true
-                    }
+                            return (currentDate.getTime() < startDate.getTime() || currentDate.getTime() > endDate.getTime()) ? false : true
+                        }
 
-                    if (!isDateInRange()) {
-                        periodStartDate.setTime(new Date(eventDate))
-                        setCalendarScale()
+                        if (!isDateInRange()) {
+                            periodStartDate.setTime(new Date(eventDate))
+                            setCalendarScale()
+                        } else {
+                            displayEvents(0)
+                        }
                     } else {
-                        displayEvents(0)
+                        eventsAddedOrChanged = true
+                        document.querySelector(".events-in-list").remove()
+                        displayEventsInList(true)
                     }
                 }, 500)
             } else {
@@ -411,23 +484,55 @@ const keydownEventListener = (event) => {
     }
 }
 
-const showAddEventPopup = () => {
+const showAddEventPopup = (eventOrTask) => {
     if (!editEvent) {
-        document.querySelector("#createEvent p").innerHTML = "Создать событие"
+        document.querySelector(".add-event__header").innerHTML = `Добавление ${eventOrTask}`
+        document.querySelector("#createEvent p").innerHTML = `Создать ${(eventOrTask == "события") ? "событие" : "задачу"}`
         document.querySelector("#eventYear").value = periodStartDate.getFullYear()
         document.querySelector("#eventMonth").value = periodStartDate.getMonth() + 1
     } else {
+        document.querySelector(".add-event__header").innerHTML = `Изменение ${eventOrTask}`
         document.querySelector("#createEvent p").innerHTML = "Изменить событие"
+        document.querySelector("#createEvent img").src = "../img/change.svg"
     }
+
+    document.querySelector("#eventNamePlaceholder").innerHTML = `Название ${eventOrTask}`
+    document.querySelector("#eventDescriptionPlaceholder").innerHTML = `Описание ${eventOrTask}`
+    document.querySelector("#eventTypeHeader").innerHTML = `Тип ${eventOrTask}`
+    document.querySelector("#eventTimeHeader").innerHTML = `Время ${eventOrTask}`
+    document.querySelector("#eventDateHeader").innerHTML = `Дата ${eventOrTask}`
+    document.querySelector("#eventTimeHeader").innerHTML = `Время ${eventOrTask}`
 
     document.querySelector(".add-event-popup").classList.add("add-event-popup_open-animation")
     setTimeout(() => {
         document.querySelector(".add-event-popup").classList.replace("add-event-popup_open-animation", "add-event-popup_open")
     }, 500)
 
+    const updateInputSelection = (inputElement) => {
+        if (String(inputElement.value).length > 0) {
+            inputElement.closest(".add-event__input-group").classList.remove("add-event__input-group_deselect")
+            inputElement.closest(".add-event__input-group").classList.add("add-event__input-group_select")
+        } else if (String(inputElement.value).length === 0) {
+            inputElement.closest(".add-event__input-group").classList.replace("add-event__input-group_select", "add-event__input-group_deselect")
+        }
+    }
+    updateInputSelection(document.querySelector("#eventName"))
+    updateInputSelection(document.querySelector("#eventDescription"))
+
     document.querySelector("#eventName").addEventListener("input", inputEventListener)
     document.querySelector("#eventDescription").addEventListener("input", inputEventListener)
     window.addEventListener("keydown", keydownEventListener)
+}
+
+const clearInputs = () => {
+    document.querySelector("#eventName").value = ""
+    document.querySelector("#eventDescription").value = ""
+    document.querySelector("#eventHours").value = ""
+    document.querySelector("#eventMinutes").value = ""
+    document.querySelector("#eventDay").value = ""
+    document.querySelector("#createEvent img").src = "../img/add.svg"
+    document.querySelector("#deleteEvent").classList.remove("add-event__delete-event_show")
+    editEvent = false
 }
 
 document.addEventListener("click", (event) => {
@@ -446,6 +551,43 @@ document.addEventListener("click", (event) => {
     } else if (event.target.closest("#returnToCurrentDate")) {
         periodStartDate.setTime(new Date())
         setCalendarScale()
+    } else if (event.target.closest("#displayEventsInList")) {
+        displayEventsInListMode = !displayEventsInListMode
+        if (displayEventsInListMode) {
+            document.querySelector("#displayEventsInList img").src = "../img/calendar.svg"
+            document.querySelector("#displayEventsInList").title = "Отобразить события на календаре"
+            document.querySelector(".days").classList.remove("days_show-events-in-calendar")
+            document.querySelector(".days").classList.add("days_hide-events-in-calendar")
+            document.querySelector(".period").classList.add("period_hide")
+            displayEventsInList(false)
+
+            setTimeout(() => {
+                document.querySelector(".days").classList.replace("days_hide-events-in-calendar", "days_display-none")
+                document.querySelector(".events-in-list").classList.add("events-in-list_show")
+            }, 500)
+        } else {
+            document.querySelector("#displayEventsInList img").src = "../img/list.svg"
+            document.querySelector("#displayEventsInList").title = "Отобразить события в виде списка"
+            document.querySelector(".events-in-list").classList.remove("events-in-list_show")
+            document.querySelector(".events-in-list").classList.add("events-in-list_hide")
+            document.querySelector(".period").classList.replace("period_hide", "period_show")
+
+            if (eventsAddedOrChanged) {
+                eventsAddedOrChanged = false
+                displayEvents(0)
+            }
+
+            setTimeout(() => {
+                document.querySelector(".events-in-list").remove()
+                document.querySelector(".days").classList.replace("days_display-none", "days_show-events-in-calendar")
+                document.querySelector(".period").classList.remove("period_show")
+            }, 500)
+
+            setTimeout(() => {
+                document.querySelector(".days").classList.remove("days_show-events-in-calendar")
+                document.querySelector(".days").classList.remove(document.querySelector(".days").classList[1])
+            }, 1000)
+        }
     } else if (event.target.closest("#sideCalendarBack")) {
         changeSideCalendarMonth(-1)
     } else if (event.target.closest("#sideCalendarForward")) {
@@ -461,8 +603,11 @@ document.addEventListener("click", (event) => {
             }
         }
     } else if (event.target.closest("#addEvent")) {
-        editEvent = false
-        showAddEventPopup()
+        clearInputs()
+        showAddEventPopup("события")
+    } else if (event.target.closest("#addTask")) {
+        clearInputs()
+        showAddEventPopup("задачи")
     } else if (event.target.closest("#closePopup") || event.target.closest(".add-event-popup__shade-area")) {
         document.querySelector(".add-event-popup").classList.replace("add-event-popup_open", "add-event-popup_close")
         document.querySelector("#eventName").removeEventListener("input", inputEventListener)
@@ -491,6 +636,7 @@ document.addEventListener("click", (event) => {
             event.target.closest(".toggle-description").querySelector(".button-image").src = "img/close-2.svg"
         }
     } else if (event.target.closest(".edit")) {
+        eventElement = event.target.closest(".event")
         const eventTime = event.target.closest(".edit").getAttribute("time")
         const eventDate = event.target.closest(".edit").getAttribute("date")
 
@@ -517,6 +663,32 @@ document.addEventListener("click", (event) => {
         editEvent = true
         previousTimeOfEvent = editableEvent.time
         previousDateOfEvent = editableEvent.date
-        showAddEventPopup()
+
+        document.querySelector("#deleteEvent").classList.add("add-event__delete-event_show")
+        showAddEventPopup((editableEventDate.eventOrTask) ? "события" : "задачи")
+    } else if (event.target.closest("#deleteEvent")) {
+        events.splice(editableEventIndex, 1)
+
+        document.querySelector(".add-event-popup").classList.replace("add-event-popup_open", "add-event-popup_close")
+        document.querySelector("#eventName").removeEventListener("input", inputEventListener)
+        document.querySelector("#eventDescription").removeEventListener("input", inputEventListener)
+
+        setTimeout(() => {
+            document.querySelector(".add-event-popup").classList.remove("add-event-popup_close")
+
+            if (events.length > 0) {
+                eventElement.remove()
+            } else {
+                eventElement.parentElement.previousElementSibling.classList.add("days__date_full-height")
+                eventElement.parentElement.remove()
+            }
+        }, 500)
+    } else if (event.target.closest('label[id^="label"]')) {
+        const labelElement = event.target.closest('label[id^="label"]')
+        const eventIndex = events.findIndex((value) => {
+            return value.time == labelElement.getAttribute("time") && value.date == labelElement.getAttribute("date")
+        })
+        const checkboxElement = document.querySelector(`#task${labelElement.id.slice(5).replace(".", "")}`)
+        events[eventIndex].checked = !checkboxElement.checked
     }
 })
