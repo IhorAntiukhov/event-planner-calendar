@@ -16,8 +16,50 @@ let previousTimeOfEvent, previousDateOfEvent = ""
 let eventElement
 let displayEventsInListMode = false
 let eventsAddedOrChanged = false
+const eventFilter = []
 const calendarScales = ["3 дня", "Неделя", "Месяц", "3 месяца", "Год"]
-const events = []
+
+let events = (localStorage.getItem("events")) ? JSON.parse(localStorage.getItem("events")) : []
+let country = localStorage.getItem("country")
+country = country || "UA"
+
+const fetchHolidays = (replaceOldHolidays) => {
+    fetch(`https://holidayapi.com/v1/holidays?pretty&key=b592103b-75f9-48bc-8775-13b0c53f4313&country=${countryElement.value.toUpperCase()}&year=2022`)
+        .then(response => response.json())
+        .then(response => {
+            if (replaceOldHolidays) {
+                events = events.filter((value) => !value.isHoliday)
+                country = countryElement.value.toUpperCase()
+                localStorage.setItem("country", country)
+            }
+
+            response.holidays.forEach((value) => {
+                events.push({
+                    name: value.name,
+                    description: "",
+                    type: "azure-events",
+                    time: `00:00`,
+                    date: value.date,
+                    eventOrTask: true,
+                    checked: false,
+                    isHoliday: true
+                })
+            })
+
+            localStorage.setItem("holidaysSaved", "1")
+            localStorage.setItem("events", JSON.stringify(events))
+            if (replaceOldHolidays) displayEvents(0)
+        })
+        .catch(() => {
+            alert("Не удалось получить праздники в этой стране")
+        })
+}
+
+const countryElement = document.querySelector("#country")
+countryElement.value = country
+countryElement.closest(".add-event__input-group").classList.add("add-event__input-group_select")
+
+if (!localStorage.getItem("holidaysSaved")) fetchHolidays()
 
 document.querySelector("#scale .dropdown__text").innerHTML = calendarScales[calendarScale - 1]
 
@@ -41,28 +83,56 @@ const getDifferenceInMonths = (date1, date2) => {
     return monthDifference + yearDifference * 12
 }
 
-const changeSideCalendarMonth = (changeFactor) => {
-    const previousDate = new Date(sideCalendarDate)
-    sideCalendarDate.setMonth(sideCalendarDate.getMonth() + 1 + changeFactor * 1)
-    sideCalendarDate.setDate(0)
-
-    if (getDifferenceInMonths(sideCalendarDate, previousDate) >= 2) sideCalendarDate.setDate(0)
-
-    let month = (new Date(sideCalendarDate.getTime())).toLocaleString("ru-RU", { month: "long" })
-    month = month[0].toUpperCase() + month.slice(1)
-
+const changeSideCalendarMonth = (changeFactor, justAddEvents) => {
     const sidebarCalendarElement = document.querySelector(".side-calendar__dates")
     sidebarCalendarElement.innerHTML = '<p class="side-calendar__year"></p>'
-    document.querySelector(".side-calendar__text").innerHTML = month
-    if (new Date().getFullYear() != sideCalendarDate.getFullYear()) {
-        document.querySelector(".side-calendar__year").innerHTML = sideCalendarDate.getFullYear()
-    } else {
-        document.querySelector(".side-calendar__year").innerHTML = ""
+
+    if (!justAddEvents) {
+        const previousDate = new Date(sideCalendarDate)
+        sideCalendarDate.setMonth(sideCalendarDate.getMonth() + 1 + changeFactor * 1)
+        sideCalendarDate.setDate(0)
+
+        if (getDifferenceInMonths(sideCalendarDate, previousDate) >= 2) sideCalendarDate.setDate(0)
+
+        let month = (new Date(sideCalendarDate.getTime())).toLocaleString("ru-RU", { month: "long" })
+        month = month[0].toUpperCase() + month.slice(1)
+
+        document.querySelector(".side-calendar__text").innerHTML = month
+        if (new Date().getFullYear() != sideCalendarDate.getFullYear()) {
+            document.querySelector(".side-calendar__year").innerHTML = sideCalendarDate.getFullYear()
+        } else {
+            document.querySelector(".side-calendar__year").innerHTML = ""
+        }
     }
 
     for (let i = 1; i <= sideCalendarDate.getDate(); i++) {
+        const eventsOnThatDay = events.filter((value) => {
+            const eventDate = new Date(value.date)
+            return eventDate.getMonth() == sideCalendarDate.getMonth() && eventDate.getDate() == i
+        })
+
+        let mostFrequentEventType = ""
+        if (eventsOnThatDay.length > 0) {
+            const eventTypesFrequency = {}
+            eventsOnThatDay.forEach((value) => {
+                if (eventTypesFrequency[value.type]) {
+                    eventTypesFrequency[value.type] += 1
+                } else {
+                    eventTypesFrequency[value.type] = 1
+                }
+            })
+
+            let maxFrequency = 0
+            for (let key in eventTypesFrequency) {
+                if (eventTypesFrequency[key] > maxFrequency) {
+                    maxFrequency = eventTypesFrequency[key]
+                    mostFrequentEventType = key
+                }
+            }
+        }
+
         sidebarCalendarElement.insertAdjacentHTML("beforeend", `
-            <button class="side-calendar__day" title="Перейти на ${i} ${formatMonth(sideCalendarDate)}"><span translate="no">${i}</span></button>
+            <button class="side-calendar__day ${mostFrequentEventType}" title="Перейти на ${i} ${formatMonth(sideCalendarDate)}"><span translate="no">${i}</span></button>
         `)
     }
 }
@@ -73,44 +143,59 @@ const insertEvent = (value, eventsInList) => {
     let eventDateString = ""
     if (eventsInList) {
         const eventDate = new Date(value.date)
-        eventDateString = ` · ${eventDate.getDate()} ${formatMonth(eventDate)}`
+        eventDateString = `${eventDate.getDate()} ${formatMonth(eventDate)}`
+    }
+
+    let eventTime = ""
+    if (!value.isHoliday && !eventsInList) {
+        eventTime = value.time
+    } else if (!value.isHoliday && eventsInList) {
+        eventTime = `${value.time} · ${eventDateString}`
+    } else if (value.isHoliday && !eventsInList) {
+        eventTime = ""
+    } else if (value.isHoliday && eventsInList) {
+        eventTime = eventDateString
     }
 
     const checkboxId = String(Math.random()).replace(".", "")
-    return `
-    <div class="event ${value.type}" draggable="true">
-        <p class="event__time" translate="no">${value.time}${eventDateString}</p>
-        ${(!value.eventOrTask) ? `
-        <div class="event__task-name">
-            <div>
-                <input type="checkbox" id="task${checkboxId}" class="event__checkbox" ${(value.checked) ? "checked" : ""}>
-                <label for="task${checkboxId}" id="label${checkboxId}" time="${value.time}" date="${value.date}" class="event__checkbox-label"><span class="event__checkbox-button"></span></label>
+    if (eventFilter.indexOf(value.type) === -1) {
+        return `
+        <div class="event ${value.type}" ${(!value.isHoliday) ? 'draggable="true"' : ""}>
+            <p class="event__time" translate="no">${eventTime}</p>
+            ${(!value.eventOrTask) ? `
+            <div class="event__task-name">
+                <div>
+                    <input type="checkbox" id="task${checkboxId}" class="event__checkbox" ${(value.checked) ? "checked" : ""}>
+                    <label for="task${checkboxId}" id="label${checkboxId}" time="${value.time}" date="${value.date}" class="event__checkbox-label"><span class="event__checkbox-button"></span></label>
+                </div>
+                <p class="event__name" translate="no">${value.name}</p>
             </div>
-            <p class="event__name" translate="no">${value.name}</p>
-        </div>
-        ` : `<p class="event__name" translate="no">${value.name}</p>`}
-        <button time="${value.time}" date="${value.date}" class="event__edit edit">
-            <img src="img/edit.svg" alt="Изменить" class="button-image">
-        </button>
-        ${(value.description !== "") ? `
-            <div class="event__description">
-                <p class="event__description-text">Описание</p>
-                <button description="${value.time}.${value.date}" class="small-button toggle-description">
-                    <img src="img/open-2.svg" alt="Развернуть" class="button-image">
-                </button>
-            </div>
-            <p description="${value.time}.${value.date}" translate="no" class="event__description-content">${value.description}</p>
-            ` : ""}
-    </div>`
+            ` : `<p class="event__name" translate="no">${value.name}</p>`}
+            <button time="${value.time}" date="${value.date}" class="event__edit" ${(value.isHoliday) ? 'style="display: none"' : ""}>
+                <img src="img/edit.svg" alt="Изменить" class="button-image">
+            </button>
+            ${(value.description !== "") ? `
+                <div class="event__description">
+                    <p class="event__description-text">Описание</p>
+                    <button description="${value.time}.${value.date}" class="small-button toggle-description">
+                        <img src="img/open-2.svg" alt="Развернуть" class="button-image">
+                    </button>
+                </div>
+                <p description="${value.time}.${value.date}" translate="no" class="event__description-content">${value.description}</p>
+                ` : ""}
+        </div>`
+    } else {
+        return ""
+    }
 }
 
-const displayEvents = (changeFactor) => {
+const displayEvents = (changeFactor, moveEvent) => {
     let differenceInDays = Math.round((periodEndDate.getTime() - periodStartDate.getTime()) / (1000 * 3600 * 24))
-    let startDate = new Date(periodStartDate)
+    const startDate = new Date(periodStartDate)
 
     const daysElement = document.querySelector(".days")
     let timeout = 0
-    if (!appJustLaunched) {
+    if (!appJustLaunched && !moveEvent) {
         daysElement.classList.remove("days_show")
         daysElement.classList.remove("days_show-reverse")
         if (changeFactor === 1) {
@@ -122,10 +207,11 @@ const displayEvents = (changeFactor) => {
     }
 
     const insertEvents = () => {
-        const suitableEvents = events.filter((eventDate) => {
-            const date = new Date(eventDate.date)
-            return (date.getDate() == startDate.getDate() && date.getMonth() == startDate.getMonth()
-                && date.getFullYear() == startDate.getFullYear())
+        const suitableEvents = events.filter((value) => {
+            const date = new Date(value.date)
+            return ((date.getDate() == startDate.getDate() && date.getMonth() == startDate.getMonth()
+                && date.getFullYear() == startDate.getFullYear() && !value.isHoliday)
+                || (date.getDate() == startDate.getDate() && date.getMonth() == startDate.getMonth() && value.isHoliday))
         })
 
         if (suitableEvents.length > 0) {
@@ -148,10 +234,11 @@ const displayEvents = (changeFactor) => {
 
             const eventsForDay = insertEvents()
             daysElement.insertAdjacentHTML("beforeend", `
-            <div class="days__item ${(startDate.getDate() == selectedDate) ? "days__item_selected" : ""}">
+            <div class="days__item ${(startDate.getDate() == selectedDate) ? "days__item_selected" : ""}" date="${startDate.toISOString()}">
                 <div class="days__date ${(eventsForDay == "") ? "days__date_full-height" : ""}">
                     <p class="days__week-day">${weekDay}</p>
-                    <p class="days__month-day" translate="no">${startDate.getDate()}</p>
+                    ${(calendarScale == 4 || calendarScale == 5) ? `<p class="days__month-day"><span translate="no">${startDate.getDate()} </span>${formatMonth(startDate)}</p>`
+                    : `<p class="days__month-day" translate="no">${startDate.getDate()}</p>`}
                 </div>
                 ${(eventsForDay != "") ? `
                     <div class="days__events">
@@ -161,15 +248,16 @@ const displayEvents = (changeFactor) => {
             </div>
             `)
             startDate.setDate(startDate.getDate() + 1)
-            if (!appJustLaunched) {
-                if (changeFactor === 1) {
-                    daysElement.classList.replace("days_hide", "days_show")
-                } else if (changeFactor === -1) {
-                    daysElement.classList.replace("days_hide-reverse", "days_show-reverse")
-                }
-            }
-            appJustLaunched = false
         }
+
+        if (!appJustLaunched) {
+            if (changeFactor === 1) {
+                daysElement.classList.replace("days_hide", "days_show")
+            } else if (changeFactor === -1) {
+                daysElement.classList.replace("days_hide-reverse", "days_show-reverse")
+            }
+        }
+        appJustLaunched = false
     }, timeout)
 }
 
@@ -466,6 +554,9 @@ const createOrEditEvent = () => {
                         document.querySelector(".events-in-list").remove()
                         displayEventsInList(true)
                     }
+
+                    changeSideCalendarMonth(0, true)
+                    localStorage.setItem("events", JSON.stringify(events))
                 }, 500)
             } else {
                 alert("Событие с таким же временем и датой уже существует!")
@@ -608,6 +699,8 @@ document.addEventListener("click", (event) => {
     } else if (event.target.closest("#addTask")) {
         clearInputs()
         showAddEventPopup("задачи")
+    } else if (event.target.closest("#setCountry")) {
+        if (countryElement.value.length > 0 && country != countryElement.value) fetchHolidays(true)
     } else if (event.target.closest("#closePopup") || event.target.closest(".add-event-popup__shade-area")) {
         document.querySelector(".add-event-popup").classList.replace("add-event-popup_open", "add-event-popup_close")
         document.querySelector("#eventName").removeEventListener("input", inputEventListener)
@@ -635,10 +728,10 @@ document.addEventListener("click", (event) => {
             descriptionElement.classList.add("event__description-content_show")
             event.target.closest(".toggle-description").querySelector(".button-image").src = "img/close-2.svg"
         }
-    } else if (event.target.closest(".edit")) {
+    } else if (event.target.closest(".event__edit")) {
         eventElement = event.target.closest(".event")
-        const eventTime = event.target.closest(".edit").getAttribute("time")
-        const eventDate = event.target.closest(".edit").getAttribute("date")
+        const eventTime = event.target.closest(".event__edit").getAttribute("time")
+        const eventDate = event.target.closest(".event__edit").getAttribute("date")
 
         editableEventIndex = events.findIndex((value) => value.time == eventTime && value.date == eventDate)
         const editableEvent = events[editableEventIndex]
@@ -690,5 +783,43 @@ document.addEventListener("click", (event) => {
         })
         const checkboxElement = document.querySelector(`#task${labelElement.id.slice(5).replace(".", "")}`)
         events[eventIndex].checked = !checkboxElement.checked
+    }
+})
+
+document.querySelector(".sidebar").addEventListener("change", (event) => {
+    const checkboxElement = event.target.closest(".sidebar__checkbox")
+    if (checkboxElement) {
+        if (!checkboxElement.checked) {
+            eventFilter.push(checkboxElement.getAttribute("eventtype"))
+        } else {
+            eventFilter.splice(eventFilter.indexOf(checkboxElement.getAttribute("eventtype")), 1)
+        }
+        displayEvents(0, true)
+    }
+})
+
+document.querySelector(".days").addEventListener("dragstart", (event) => {
+    event.dataTransfer.effectAllowed = "move"
+    const editEventElement = event.target.querySelector(".event__edit")
+    const eventIndex = events.findIndex((value) => value.time == editEventElement.getAttribute("time") && value.date == editEventElement.getAttribute("date"))
+    event.dataTransfer.setData("text/plain", String(eventIndex))
+})
+
+document.querySelector(".days").addEventListener("dragover", (event) => {
+    if (event.target.closest(".days__item")) {
+        event.preventDefault()
+        event.dataTransfer.dropEffect = "move"
+    }
+})
+
+document.querySelector(".days").addEventListener("drop", (event) => {
+    if (event.target.closest(".days__item")) {
+        event.preventDefault()
+        const eventIndex = event.dataTransfer.getData("text/plain")
+        const eventDate = event.target.closest(".days__item").getAttribute("date")
+        events[eventIndex].date = `${eventDate.slice(0, 11)}00:00:00.0Z`
+        displayEvents(0, true)
+        changeSideCalendarMonth(0, true)
+        localStorage.setItem("events", JSON.stringify(events))
     }
 })

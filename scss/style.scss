@@ -373,17 +373,15 @@
         background-color: #b58200;
     }
 }
-.sidebar__language {
-    width: 64px;
-    height: 64px;
-    padding: 8px;
-    background-color: #a9a9a9;
-    border-radius: 50%;
-    transition-duration: 0.15s;
+#holidays:checked + .sidebar__checkbox-label .sidebar__checkbox-button {
+    background-color: #00db5b;
 
     &:hover {
-        background-color: #c0c0c0;
+        background-color: #00b34b;
     }
+}
+#setCountry {
+    margin-left: 10px;
 }
 
 .calendar {
@@ -748,6 +746,9 @@
         animation: moveInputToNormal 0.15s linear 0s 1 normal forwards;
     }
 }
+.add-event__input-group_country {
+    background-color: #a9a9a9;
+}
 .add-event__input {
     @include font(24);
     position: relative;
@@ -758,6 +759,9 @@
 .add-event__placeholder {
     @include font($fontSize: 24, $color: #a9a9a9);
     position: absolute;
+}
+.add-event__placeholder_country {
+    color: #dcdcdc;
 }
 @keyframes movePlaceholderToTop {
     0% {
@@ -807,6 +811,16 @@
     .dropdown__current {
         width: 100%;
     }
+
+    .dropdown__option {
+        display: flex;
+        align-items: center;
+
+        .dropdown__color {
+            width: 22px;
+            height: 22px;
+        }
+    }
 }
 .dropdown__color-text {
     display: flex;
@@ -827,32 +841,72 @@
     @include font($fontSize: 16, $color: #696969);
     margin-bottom: 3px;
 }
-#eventType {
-    .dropdown__option {
-        display: flex;
-        align-items: center;
-
-        .dropdown__color {
-            width: 22px;
-            height: 22px;
-        }
-    }
-}
 
 .red-events {
     background-color: #db0000;
+
+    &.side-calendar__day {
+        color: white;
+
+        &:hover {
+            background-color: #b50000;
+        }
+    }
 }
 .blue-events {
     background-color: #0063db;
+
+    &.side-calendar__day {
+        color: white;
+
+        &:hover {
+            background-color: #0051b5;
+        }
+    }
 }
 .purple-events {
     background-color: #af00db;
+
+    &.side-calendar__day {
+        color: white;
+
+        &:hover {
+            background-color: #9100b5;
+        }
+    }
 }
 .green-events {
     background-color: #0dc200;
+
+    &.side-calendar__day {
+        color: white;
+
+        &:hover {
+            background-color: #9100b5;
+        }
+    }
 }
 .orange-events {
     background-color: #db9d00;
+
+    &.side-calendar__day {
+        color: white;
+
+        &:hover {
+            background-color: #b58200;
+        }
+    }
+}
+.azure-events {
+    background-color: #00db5b;
+
+    &.side-calendar__day {
+        color: white;
+
+        &:hover {
+            background-color: #00b34b;
+        }
+    }
 }
 
 .add-event__input-group_time {

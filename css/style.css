@@ -483,16 +483,15 @@ h1, h2, h3, h4, h5, h6 {
   background-color: #b58200;
 }
 
-.sidebar__language {
-  width: 64px;
-  height: 64px;
-  padding: 8px;
-  background-color: #a9a9a9;
-  border-radius: 50%;
-  transition-duration: 0.15s;
+#holidays:checked + .sidebar__checkbox-label .sidebar__checkbox-button {
+  background-color: #00db5b;
 }
-.sidebar__language:hover {
-  background-color: #c0c0c0;
+#holidays:checked + .sidebar__checkbox-label .sidebar__checkbox-button:hover {
+  background-color: #00b34b;
+}
+
+#setCountry {
+  margin-left: 10px;
 }
 
 .calendar {
@@ -876,6 +875,10 @@ h1, h2, h3, h4, h5, h6 {
   animation: moveInputToNormal 0.15s linear 0s 1 normal forwards;
 }
 
+.add-event__input-group_country {
+  background-color: #a9a9a9;
+}
+
 .add-event__input {
   font-family: Carlito;
   font-size: 24px;
@@ -893,6 +896,10 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 400;
   color: #a9a9a9;
   position: absolute;
+}
+
+.add-event__placeholder_country {
+  color: #dcdcdc;
 }
 
 @keyframes movePlaceholderToTop {
@@ -938,6 +945,14 @@ h1, h2, h3, h4, h5, h6 {
 #eventType .dropdown__current {
   width: 100%;
 }
+#eventType .dropdown__option {
+  display: flex;
+  align-items: center;
+}
+#eventType .dropdown__option .dropdown__color {
+  width: 22px;
+  height: 22px;
+}
 
 .dropdown__color-text {
   display: flex;
@@ -965,33 +980,64 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: 3px;
 }
 
-#eventType .dropdown__option {
-  display: flex;
-  align-items: center;
-}
-#eventType .dropdown__option .dropdown__color {
-  width: 22px;
-  height: 22px;
-}
-
 .red-events {
   background-color: #db0000;
+}
+.red-events.side-calendar__day {
+  color: white;
+}
+.red-events.side-calendar__day:hover {
+  background-color: #b50000;
 }
 
 .blue-events {
   background-color: #0063db;
 }
+.blue-events.side-calendar__day {
+  color: white;
+}
+.blue-events.side-calendar__day:hover {
+  background-color: #0051b5;
+}
 
 .purple-events {
   background-color: #af00db;
+}
+.purple-events.side-calendar__day {
+  color: white;
+}
+.purple-events.side-calendar__day:hover {
+  background-color: #9100b5;
 }
 
 .green-events {
   background-color: #0dc200;
 }
+.green-events.side-calendar__day {
+  color: white;
+}
+.green-events.side-calendar__day:hover {
+  background-color: #9100b5;
+}
 
 .orange-events {
   background-color: #db9d00;
+}
+.orange-events.side-calendar__day {
+  color: white;
+}
+.orange-events.side-calendar__day:hover {
+  background-color: #b58200;
+}
+
+.azure-events {
+  background-color: #00db5b;
+}
+.azure-events.side-calendar__day {
+  color: white;
+}
+.azure-events.side-calendar__day:hover {
+  background-color: #00b34b;
 }
 
 .add-event__input-group_time {

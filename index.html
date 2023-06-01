@@ -83,29 +83,37 @@
             </div>
 
             <div class="sidebar__checkbox-group">
-                <input type="checkbox" id="importantEvents" class="sidebar__checkbox" checked>
+                <input type="checkbox" id="importantEvents" class="sidebar__checkbox" eventtype="red-events" checked>
                 <label for="importantEvents" class="sidebar__checkbox-label"><span class="sidebar__checkbox-button"></span>Важные события</label>
             </div>
             <div class="sidebar__checkbox-group">
-                <input type="checkbox" id="nonUrgentEvents" class="sidebar__checkbox" checked>
+                <input type="checkbox" id="nonUrgentEvents" class="sidebar__checkbox" eventtype="blue-events" checked>
                 <label for="nonUrgentEvents" class="sidebar__checkbox-label"><span class="sidebar__checkbox-button"></span>Несрочные события</label>
             </div>
             <div class="sidebar__checkbox-group">
-                <input type="checkbox" id="creativeEvents" class="sidebar__checkbox" checked>
+                <input type="checkbox" id="creativeEvents" class="sidebar__checkbox" eventtype="purple-events" checked>
                 <label for="creativeEvents" class="sidebar__checkbox-label"><span class="sidebar__checkbox-button"></span>Творчество и креатив</label>
             </div>
             <div class="sidebar__checkbox-group">
-                <input type="checkbox" id="healthAndEarningsEvents" class="sidebar__checkbox" checked>
+                <input type="checkbox" id="healthAndEarningsEvents" class="sidebar__checkbox" eventtype="green-events" checked>
                 <label for="healthAndEarningsEvents" class="sidebar__checkbox-label"><span class="sidebar__checkbox-button"></span>Здоровье и заработок</label>
             </div>
-            <div id="lastCheckboxGroup" class="sidebar__checkbox-group">
-                <input type="checkbox" id="entertainmentEvents" class="sidebar__checkbox" checked>
+            <div class="sidebar__checkbox-group">
+                <input type="checkbox" id="entertainmentEvents" class="sidebar__checkbox" eventtype="orange-events" checked>
                 <label for="entertainmentEvents" class="sidebar__checkbox-label"><span class="sidebar__checkbox-button"></span>Развлечения</label>
             </div>
+            <div id="lastCheckboxGroup" class="sidebar__checkbox-group">
+                <input type="checkbox" id="holidays" class="sidebar__checkbox" eventtype="azure-events" checked>
+                <label for="holidays" class="sidebar__checkbox-label"><span class="sidebar__checkbox-button"></span>Праздники</label>
+            </div>
 
-            <button class="sidebar__language">
-                <img src="img/language.svg" alt="" class="button-image" title="Изменить язык">
-            </button>
+            <div class="add-event__input-group add-event__input-group_country">
+                <span class="add-event__placeholder add-event__placeholder_country">Код вашей страны</span>
+                <input id="country" type="text" class="add-event__input" autocomplete="off">
+                <button id="setCountry" class="small-button">
+                    <img src="img/check-mark.svg" alt="" class="button-image">
+                </button>
+            </div>
         </div>
 
         <div class="calendar">
