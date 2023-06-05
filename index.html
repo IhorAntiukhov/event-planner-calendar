@@ -10,22 +10,28 @@
 <body>
     <div class="content">
         <div class="top">
-            <div id="scale" class="dropdown">
-                <div class="dropdown__current" title="Масштаб календаря">
-                    <div class="dropdown__icon-text">
-                        <img src="img/calendar.svg" alt="" class="dropdown__icon">
-                        <span class="dropdown__text">3 дня</span>
+            <div class="top__calendar-scale">
+                <button id="openSidebar" class="medium-button">
+                    <img src="img/menu.svg" alt="Открыть панель" class="button-image">
+                </button>
+
+                <div id="scale" class="dropdown">
+                    <div class="dropdown__current" title="Масштаб календаря">
+                        <div class="dropdown__icon-text">
+                            <img src="img/calendar.svg" alt="" class="dropdown__icon">
+                            <span class="dropdown__text">3 дня</span>
+                        </div>
+                        <img src="img/open.svg" alt="" class="dropdown__toggle">
                     </div>
-                    <img src="img/open.svg" alt="" class="dropdown__toggle">
-                </div>
-                <div class="dropdown__options-wrapper">
-                    <ul class="dropdown__options">
-                        <li scale="3d" class="dropdown__option">3 дня</li>
-                        <li scale="7d" class="dropdown__option">Неделя</li>
-                        <li scale="1m" class="dropdown__option">Месяц</li>
-                        <li scale="3m" class="dropdown__option">3 месяца</li>
-                        <li scale="1y" class="dropdown__option">Год</li>
-                    </ul>
+                    <div class="dropdown__options-wrapper">
+                        <ul class="dropdown__options">
+                            <li class="dropdown__option" scale="3d">3 дня</li>
+                            <li class="dropdown__option" scale="7d">Неделя</li>
+                            <li class="dropdown__option" scale="1m">Месяц</li>
+                            <li class="dropdown__option" scale="3m">3 месяца</li>
+                            <li class="dropdown__option" scale="1y">Год</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
 
@@ -53,6 +59,10 @@
         </div>
 
         <div class="sidebar">
+            <button id="closeSidebar" class="medium-button">
+                <img src="img/menu.svg" alt="Открыть панель" class="button-image">
+            </button>
+
             <div class="side-calendar">
                 <div class="side-calendar__month">
                     <div class="side-calendar__change-period">
@@ -123,6 +133,8 @@
                 <p class="calendar__year-text"></p>
             </div>
         </div>
+
+        <div class="content__shade-area"></div>
     </div>
 
     <div class="add-event-popup">

@@ -1,0 +1,104 @@
+// Style of event or task
+.event {
+    position: relative;
+    margin-bottom: 7px;
+    padding: 15px;
+    border-radius: 15px;
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+
+    &:focus {
+        cursor: grab;
+    }
+}
+.event__time {
+    @include font($fontSize: 16, $color: rgba(white, 0.8));
+    margin-bottom: 5px;
+}
+.event__name {
+    @include font($fontSize: 24, $color: white);
+    inline-size: 100%;
+    overflow-wrap: break-word;
+}
+.event__description {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 5px 0 0;
+}
+.event__description-text {
+    @include font($fontSize: 20, $color: rgba(white, 0.8));
+    margin-right: 15px;
+}
+.event__description-content {
+    @include font($fontSize: 22, $color: white);
+    display: none;
+    margin-top: 5px;
+    inline-size: 100%;
+    overflow-wrap: break-word;
+}
+.event__description-content_show {
+    display: block;
+    animation: showEventDescription 0.25s linear 0s 1 normal forwards;
+    transform-origin: top;
+}
+.event__description-content_hide {
+    display: block;
+    animation: hideEventDescription 0.25s linear 0s 1 normal forwards;
+    transform-origin: top;
+}
+.event__edit {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 24px;
+    height: 24px;
+    background-color: transparent;
+}
+.event__task-name {
+    width: 100%;
+    display: flex;
+    align-items: center;
+
+    div:has(> .event__checkbox:checked) + .event__name {
+        text-decoration: line-through;
+    }
+}
+.add-event__delete-event_show {
+    display: inline-block;
+}
+.event__checkbox {
+    display: none;
+}
+.event__checkbox-button {
+    position: relative;
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    margin-right: 10px;
+    border: solid 2px white;
+    border-radius: 50%;
+    transition-duration: 0.25s;
+
+    &::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: inline-block;
+        width: 65%;
+        height: 65%;
+        background: url("../img/check-mark.svg");
+        background-size: contain;
+        opacity: 0;
+        transition-duration: 0.25s;
+    }
+}
+.event__checkbox:checked + .event__checkbox-label .event__checkbox-button {
+    &::before {
+        opacity: 1;
+    }
+}

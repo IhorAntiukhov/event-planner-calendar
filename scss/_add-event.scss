@@ -1,0 +1,177 @@
+// Popup menu to create an event or task on the calendar
+.add-event-popup {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: none;
+    width: 100vw;
+    height: 100vh;
+}
+.add-event-popup_open-animation {
+    display: block;
+
+    .add-event-popup__shade-area {
+        animation: showShadeArea 0.5s linear 0s 1 normal forwards;
+    }
+
+    .add-event {
+        animation: showAddEventPopup 0.5s linear 0s 1 normal forwards;
+    }
+}
+.add-event-popup_open {
+    display: block;
+}
+.add-event-popup_close {
+    display: block;
+
+    .add-event-popup__shade-area {
+        animation: hideShadeArea 0.5s linear 0s 1 normal forwards;
+    }
+
+    .add-event {
+        animation: hideAddEventPopup 0.5s linear 0s 1 normal forwards;
+    }
+}
+.add-event-popup__shade-area {
+    width: 100%;
+    height: 100%;
+    background-color: rgba($color: black, $alpha: 0.5);
+}
+
+// Menu content
+.add-event {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50vw;
+    max-height: 90vw;
+    padding: 20px;
+    background-color: #f5f5f5;
+    border-radius: 20px;
+    box-shadow: 0 0 15px black;
+}
+.add-event__content {
+    position: relative;
+}
+.add-event__header {
+    @include font(36);
+    margin: 0 34px 20px 0;
+}
+#closePopup {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+.add-event__input-group {
+    position: relative;
+    width: 75%;
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 10px 15px;
+    background-color: #dcdcdc;
+    border-top-left-radius: 12.75px;
+    border-top-right-radius: 12.75px;
+    border-bottom: solid 2px #696969;
+    transition-duration: 0.15s;
+
+    &:has(> .add-event__input:focus) {
+        border-bottom-color: #0063db;
+    }
+}
+.add-event__input-group_select {
+    .add-event__placeholder {
+        animation: movePlaceholderToTop 0.15s linear 0s 1 normal forwards;
+    }
+
+    .add-event__input {
+        animation: moveInputDown 0.15s linear 0s 1 normal forwards;
+    }
+}
+.add-event__input-group_deselect {
+    .add-event__placeholder {
+        animation: movePlaceholderToNormal 0.15s linear 0s 1 normal forwards;
+    }
+
+    .add-event__input {
+        animation: moveInputToNormal 0.15s linear 0s 1 normal forwards;
+    }
+}
+.add-event__input-group_country {
+    background-color: #a9a9a9;
+}
+.add-event__input {
+    @include font(24);
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    background-color: transparent;
+}
+.add-event__placeholder {
+    @include font($fontSize: 24, $color: #a9a9a9);
+    position: absolute;
+}
+.add-event__placeholder_country {
+    color: #dcdcdc;
+}
+.add-event__input-group_time {
+    flex-direction: column;
+    align-items: start;
+    border-bottom: 0;
+    border-radius: 12.75px;
+}
+.add-event__input-header {
+    @include font($fontSize: 16, $color: #696969);
+    margin-bottom: 5px;
+}
+.add-event__time-group {
+    display: flex;
+}
+.add-event__input_time {
+    z-index: 1;
+    background-color: transparent;
+    width: 24px;
+    border-bottom: solid 2px #696969;
+    transition-duration: 0.15s;
+
+    &:focus {
+        border-bottom-color: #0063db;
+    }
+}
+.add-event__input_year {
+    width: 50px;
+}
+.add-event__colon {
+    @include font($fontSize: 24, $color: #696969);
+    margin: 0 7px;
+}
+.add-event__dot {
+    align-self: end;
+    margin: 0 5px;
+    font-size: 28px;
+}
+#createEvent {
+    margin: 0 10px 0 0;
+    background-color: #dcdcdc;
+
+    &:hover {
+        background-color: #e8e8e8;
+    }
+}
+.add-event__change-event {
+    display: flex;
+}
+.add-event__delete-event {
+    display: none;
+    width: 49px;
+    height: 49px;
+    padding: 12px;
+    background-color: #dcdcdc;
+    border-radius: 50%;
+    transition-duration: 0.15s;
+
+    &:hover {
+        background-color: #e8e8e8;
+    }
+}

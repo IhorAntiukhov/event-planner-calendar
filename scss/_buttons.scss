@@ -1,0 +1,176 @@
+// Buttons with transparent background and icon
+.small-button {
+    width: 24px;
+    height: 24px;
+    background-color: transparent;
+}
+.medium-button {
+    width: 48px;
+    height: 48px;
+    background-color: transparent;
+}
+.button-image {
+    width: 100%;
+    height: 100%;
+}
+
+// Button with icon and text
+.text-button {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 10px 20px;
+    background-color: #a9a9a9;
+    border-radius: 24.5px;
+    transition-duration: 0.15s;
+
+    &:hover {
+        background-color: #c0c0c0;
+    }
+}
+#addTask {
+    width: 100%;
+    margin-bottom: 20px;
+}
+.text-button__add-task-text {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+.text-button__image {
+    height: 24px;
+    margin-right: 10px;
+}
+.text-button__text {
+    @include font(24);
+}
+
+// Drop-down menu
+.dropdown {
+    position: relative;
+}
+#scale {
+    @media screen and (max-width: 900px) and (min-width: 423px) {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    @media screen and (max-width: 422px) {
+        position: absolute;
+        top: 50%;
+        left: 63px;
+        transform: translateY(-50%);
+    }
+}
+.dropdown__current {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 185px;
+    padding: 10px 15px;
+    background-color: #f5f5f5;
+    border-radius: 5.5px;
+    box-shadow: 1px 1px 4px #696969;
+    cursor: pointer;
+}
+.dropdown__icon-text {
+    display: flex;
+    align-items: center;
+}
+.dropdown__icon {
+    height: 22px;
+    margin-right: 8px;
+}
+.dropdown__text {
+    @include font(24);
+    margin-right: 15px;
+}
+.dropdown__toggle {
+    width: 18px;
+    height: 18px;
+    background-color: transparent;
+}
+.dropdown__options-wrapper {
+    position: absolute;
+    z-index: 3;
+    display: none;
+    width: 100%;
+    padding-top: 3px;
+}
+.dropdown__options-wrapper_open {
+    display: block;
+    animation: openMenuOptions 0.25s linear 0s 1 normal forwards;
+    transform-origin: top;
+}
+.dropdown__options-wrapper_close {
+    display: block;
+    animation: closeMenuOptions 0.25s linear 0s 1 normal forwards;
+    transform-origin: top;
+}
+.dropdown__options {
+    width: 100%;
+    border-radius: 5.5px;
+    box-shadow: 1px 1px 4px #696969;
+}
+.dropdown__option {
+    @include font(18);
+    padding: 10px 15px;
+    background-color: #e8e8e8;
+    border-bottom: solid #a9a9a9 1.5px;
+    transition-duration: 0.15s;
+
+    &:first-child {
+        border-top-left-radius: 5.5px;
+        border-top-right-radius: 5.5px;
+    }
+
+    &:last-child {
+        border-bottom: 0;
+        border-bottom-left-radius: 5.5px;
+        border-bottom-right-radius: 5.5px;
+    }
+
+    &:hover {
+        background-color: #dcdcdc;
+    }
+}
+#eventType {
+    width: 75%;
+    margin-bottom: 15px;
+
+    .dropdown__current {
+        width: 100%;
+    }
+
+    .dropdown__option {
+        display: flex;
+        align-items: center;
+
+        .dropdown__color {
+            width: 22px;
+            height: 22px;
+        }
+    }
+}
+.dropdown__color-text {
+    display: flex;
+    align-items: center;
+}
+.dropdown__color {
+    width: 28px;
+    height: 28px;
+    margin-right: 8px;
+    background-color: #db0000;
+    border-radius: 50%;
+}
+.dropdown__header-text {
+    display: flex;
+    flex-direction: column;
+}
+.dropdown__header {
+    @include font($fontSize: 16, $color: #696969);
+    margin-bottom: 3px;
+}
