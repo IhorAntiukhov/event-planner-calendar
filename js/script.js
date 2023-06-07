@@ -16,6 +16,7 @@ let eventTypeOpened = false;
 let eventType = 'red-events';
 let editEvent = false;
 let editableEventIndex = 0;
+let eventOrTaskCreation = true;
 
 // Previous time and date of the event before it was edited
 let previousTimeOfEvent;
@@ -445,7 +446,7 @@ const clearInputs = () => {
     document.querySelector('#eventHours').value = '';
     document.querySelector('#eventMinutes').value = '';
     document.querySelector('#eventDay').value = '';
-    document.querySelector('#createEvent img').src = '../img/add.svg';
+    document.querySelector('#createEvent img').src = 'img/add.svg';
     document.querySelector('#deleteEvent').classList.remove('add-event__delete-event_show');
     editEvent = false;
 };
@@ -590,7 +591,7 @@ const createOrEditEvent = () => {
                         type: eventType,
                         time: `${eventHoursElement.value.padStart(2, '0')}:${eventMinutesElement.value.padStart(2, '0')}`,
                         date: eventDate,
-                        eventOrTask: (document.querySelector('#createEvent p').innerHTML === 'Создать событие'),
+                        eventOrTask: eventOrTaskCreation,
                         checked: false,
                     });
 
@@ -681,12 +682,15 @@ const showAddEventPopup = (eventOrTask) => {
     if (!editEvent) {
         document.querySelector('.add-event__header').innerHTML = `Добавление ${eventOrTask}`;
         document.querySelector('#createEvent p').innerHTML = `Создать ${(eventOrTask === 'события') ? 'событие' : 'задачу'}`;
+        document.querySelector('#createEvent img').src = 'img/add.svg';
+        document.querySelector('#deleteEvent').style.display = 'none';
         document.querySelector('#eventYear').value = periodStartDate.getFullYear();
         document.querySelector('#eventMonth').value = periodStartDate.getMonth() + 1;
     } else {
         document.querySelector('.add-event__header').innerHTML = `Изменение ${eventOrTask}`;
         document.querySelector('#createEvent p').innerHTML = 'Изменить событие';
-        document.querySelector('#createEvent img').src = '../img/change.svg';
+        document.querySelector('#createEvent img').src = 'img/change.svg';
+        document.querySelector('#deleteEvent').style.display = 'block';
     }
 
     document.querySelector('#eventNamePlaceholder').innerHTML = `Название ${eventOrTask}`;
@@ -741,7 +745,7 @@ document.addEventListener('click', (event) => {
     } else if (event.target.closest('#displayEventsInList')) {
         displayEventsInListMode = !displayEventsInListMode;
         if (displayEventsInListMode) {
-            document.querySelector('#displayEventsInList img').src = '../img/calendar.svg';
+            document.querySelector('#displayEventsInList img').src = 'img/calendar.svg';
             document.querySelector('#displayEventsInList').title = 'Отобразить события на календаре';
             document.querySelector('.days').classList.remove('days_show-events-in-calendar');
             document.querySelector('.days').classList.add('days_hide-events-in-calendar');
@@ -754,7 +758,7 @@ document.addEventListener('click', (event) => {
                 document.querySelector('.events-in-list').classList.add('events-in-list_show');
             }, 500);
         } else {
-            document.querySelector('#displayEventsInList img').src = '../img/list.svg';
+            document.querySelector('#displayEventsInList img').src = 'img/list.svg';
             document.querySelector('#displayEventsInList').title = 'Отобразить события в виде списка';
             document.querySelector('.events-in-list').classList.remove('events-in-list_show');
             document.querySelector('.events-in-list').classList.add('events-in-list_hide');
@@ -793,9 +797,11 @@ document.addEventListener('click', (event) => {
             }
         }
     } else if (event.target.closest('#addEvent')) {
+        eventOrTaskCreation = true;
         clearInputs();
         showAddEventPopup('события');
     } else if (event.target.closest('#addTask')) {
+        eventOrTaskCreation = false;
         clearInputs();
         showAddEventPopup('задачи');
     } else if (event.target.closest('#setCountry')) {
@@ -856,8 +862,7 @@ document.addEventListener('click', (event) => {
         previousTimeOfEvent = editableEvent.time;
         previousDateOfEvent = editableEvent.date;
 
-        document.querySelector('#deleteEvent').classList.add('add-event__delete-event_show');
-        showAddEventPopup((editableEventDate.eventOrTask) ? 'события' : 'задачи');
+        showAddEventPopup((editableEvent.eventOrTask) ? 'события' : 'задачи');
     } else if (event.target.closest('#deleteEvent')) {
         events.splice(editableEventIndex, 1);
         localStorage.setItem('events', JSON.stringify(events));
@@ -865,6 +870,8 @@ document.addEventListener('click', (event) => {
         document.querySelector('.add-event-popup').classList.replace('add-event-popup_open', 'add-event-popup_close');
         document.querySelector('#eventName').removeEventListener('input', inputEventListener);
         document.querySelector('#eventDescription').removeEventListener('input', inputEventListener);
+
+        changeSideCalendarMonth(0);
 
         setTimeout(() => {
             document.querySelector('.add-event-popup').classList.remove('add-event-popup_close');
